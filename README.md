@@ -1,4 +1,4 @@
-lb_server
+LlamaBucket Server
 =========
 
-Server for the LlamaBucket Website
+A server for the LlamaBucket web application
