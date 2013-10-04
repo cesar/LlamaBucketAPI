@@ -6,8 +6,10 @@
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
+var cart = require('./routes/cart_logic');
 var search = require('./routes/search_logic');
 var item = require('./routes/item_logic');
+var invoice = require('./routes/invoice_logic');
 var http = require('http');
 var path = require('path');
 
@@ -51,6 +53,11 @@ app.get('/search/:parameter', search.get_results);
 app.get('/categories', search.get_categories);
 app.get('/categories/:parent_id', search.get_subcategories);
 app.get('/item', item.get_item);
+<<<<<<< HEAD
+app.get('/cart', cart.get_cart);
+=======
+app.get('/invoice', invoice.get_invoice);
+>>>>>>> 9a8680486d7e18d6710a99c2ecb5e6258fc6d387
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
