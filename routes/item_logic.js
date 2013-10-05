@@ -185,8 +185,7 @@ var items = {
 
 var get_item = function(req, res, next){
 
-	console.log(items);
-	res.send(items.content[0]);
+	res.send(items.content[req.params.parameter]);
 
 
 }
