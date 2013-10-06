@@ -10,7 +10,7 @@ var invoices = {
 		time : "04:20"
 	},
 	{
-		invoiceId : 00015258,
+		invoiceId : 1,
 		buyer : "Jose Martinez",
 		seller : "Cesar Cruz",
 		item : "Macbook Case: Crimson Red",
@@ -19,7 +19,7 @@ var invoices = {
 		time : "14:25"
 	},
 	{
-		invoiceId : 16165755,
+		invoiceId : 2,
 		buyer : "Luis Medina",
 		seller : "Cesar Cruz",
 		item : "Monster Energy Drink: Case of 24",
@@ -28,7 +28,7 @@ var invoices = {
 		time : "10:49"
 	},
 	{
-		invoiceId : 84572152,
+		invoiceId : 3,
 		buyer : "Jose Martinez",
 		seller : "Luis Medina",
 		item : "Toy Dinosaur",
@@ -37,7 +37,7 @@ var invoices = {
 		time : "08:59"
 	},
 	{
-		invoiceId : 14589003,
+		invoiceId : 4,
 		buyer : "Jose Martinez",
 		seller : "Luis Medina",
 		item : "Google Glass",
