@@ -109,6 +109,7 @@ var delete_address = function(req, res, next)
 exports.sign_in = sign_in;
 exports.update_user = update_user;
 exports.user_addresses = user_addresses;
+<<<<<<< HEAD
 exports.add_mail_address = add_mail_address;
 exports.delete_address = delete_address;
 
@@ -116,3 +117,6 @@ exports.delete_address = delete_address;
 
 
 
+=======
+exports.add_mail_address = add_mail_address;
+>>>>>>> 38ccc8321b714f2a6dbdaa700cd0af11848caa64
