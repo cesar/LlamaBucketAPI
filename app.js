@@ -54,6 +54,7 @@ app.get('/categories', search.get_categories);
 app.get('/categories/:parent_id', search.get_subcategories);
 app.get('/item/:parameter', item.get_item);
 app.post('/sign_in', user.sign_in);
+app.post('/update_user_info', user.update_user);
 app.get('/item', item.get_item);
 app.get('/invoice', invoice.get_invoice);
 app.get('/cart', cart.get_cart);

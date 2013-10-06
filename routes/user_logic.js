@@ -4,7 +4,8 @@ var user = {
 	first_name : 'César',
 	last_name : 'Cruz',
 	email : 'cesarcruz91@gmail.com',
-	password : 'fuckit',
+	password : 'fuckit', //This will be hashed.
+	phone : '7874526702',
 	mail_address1 : '#311 Calle Ext. Los Robles',
 	mail_address2 : '',
 	mail_city : 'Rincon',
@@ -18,6 +19,9 @@ var user = {
 	image : 'https://fbcdn-sphotos-e-a.akamaihd.net/hphotos-ak-ash4/1009521_322256844573732_661186218_o.jpg'
 };
 
+/*
+*	Sign in the user.
+*/
 var sign_in = function(req, res, next)
 {
 	if(req.body.username == user.email && req.body.password == user.password)
@@ -30,4 +34,18 @@ var sign_in = function(req, res, next)
 	}
 }
 
+/**
+*	Modify the user and send the new user to the client.
+*/
+var update_user = function(req, res, next)
+{
+	user.first_name = req.body.first_name;
+	user.last_name = req.body.last_name;
+	user.email = req.body.email;
+
+	res.send(user);
+}
+
 exports.sign_in = sign_in;
+
+exports.update_user = update_user;
