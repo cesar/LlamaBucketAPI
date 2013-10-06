@@ -89,8 +89,20 @@ var add_mail_address = function(req, res, next)
 	};
 
 	addresses.content.push(new_address);
-	
+
 	//Confirm that all is well
+	res.send(200);
+}
+
+var delete_address = function(req, res, next)
+{
+	for(var i = 0; i < addresses.content.length; i++)
+	{
+		if(addresses.content[i].mail_address1 == req.body.address1)
+		{
+			addresses.content.splice(i, 1);
+		}
+	}
 	res.send(200);
 }
 
@@ -98,6 +110,7 @@ exports.sign_in = sign_in;
 exports.update_user = update_user;
 exports.user_addresses = user_addresses;
 exports.add_mail_address = add_mail_address;
+exports.delete_address = delete_address;
 
 
 
