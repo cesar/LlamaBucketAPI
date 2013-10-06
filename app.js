@@ -58,6 +58,7 @@ app.post('/update_user_info', user.update_user);
 app.get('/item', item.get_item);
 app.get('/invoice', invoice.get_invoice);
 app.get('/cart', cart.get_cart);
+app.get('/invoice/:parameter', invoice.get_inv_from_id);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
