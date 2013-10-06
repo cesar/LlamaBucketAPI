@@ -16,7 +16,8 @@ var user = {
 	bill_city : 'Rincon',
 	bill_state : 'Puerto Rico',
 	bill_zip : '00677',
-	image : 'https://fbcdn-sphotos-e-a.akamaihd.net/hphotos-ak-ash4/1009521_322256844573732_661186218_o.jpg'
+	image : 'https://fbcdn-sphotos-e-a.akamaihd.net/hphotos-ak-ash4/1009521_322256844573732_661186218_o.jpg',
+	cc_number : '2938 8493 1739 0394',
 };
 
 /*
