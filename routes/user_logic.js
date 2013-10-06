@@ -77,6 +77,29 @@ var user_addresses = function(req, res, next)
 	res.send(addresses);
 }
 
+var add_mail_address = function(req, res, next)
+{
+	console.log(req.body);
+	var new_address = {
+		mail_address1 : req.body.address1,
+		mail_address2 : req.body.address2,
+		mail_city : req.body.city,
+		mail_state : req.body.country,
+		mail_zip : req.body.zipcode
+	};
+
+	addresses.content.push(new_address);
+	
+	//Confirm that all is well
+	res.send(200);
+}
+
 exports.sign_in = sign_in;
 exports.update_user = update_user;
 exports.user_addresses = user_addresses;
+exports.add_mail_address = add_mail_address;
+
+
+
+
+
