@@ -20,6 +20,31 @@ var user = {
 	cc_number : '2938 8493 1739 0394',
 };
 
+var addresses = { user_email : 'cesarcruz91@gmail.com',
+content :[
+{
+	mail_address1 : '#311 Calle Ext. Los Robles',
+	mail_address2 : '',
+	mail_city : 'Rincon',
+	mail_state : 'Puerto Rico',
+	mail_zip : '00677'
+},
+{
+	mail_address1 : '#455 Calle Ext. Los Giraldas',
+	mail_address2 : '',
+	mail_city : 'Comerio',
+	mail_state : 'Puerto Rico',
+	mail_zip : '00787'
+},
+{
+	mail_address1 : '#666 Calle Sodoma Ext. Gomorra',
+	mail_address2 : '',
+	mail_city : 'Juncos',
+	mail_state : 'Puerto Rico',
+	mail_zip : '00666'
+}]
+};
+
 /*
 *	Sign in the user.
 */
@@ -47,6 +72,11 @@ var update_user = function(req, res, next)
 	res.send(user);
 }
 
-exports.sign_in = sign_in;
+var user_addresses = function(req, res, next)
+{
+	res.send(addresses);
+}
 
+exports.sign_in = sign_in;
 exports.update_user = update_user;
+exports.user_addresses = user_addresses;
