@@ -99,3 +99,4 @@ exports.update_user = update_user;
 exports.user_addresses = user_addresses;
 exports.add_mail_address = add_mail_address;
 
+exports.update_user = update_user;
