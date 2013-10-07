@@ -50,5 +50,11 @@ var get_cart = function(req, res, err)
 	res.send(user_data);
 }
 
+var add_to_cart = function(req, res, next)
+{
+	user_data.content.push(req.body);
+	res.send(200);
+}
 exports.get_cart = get_cart;
 exports.get_address = get_address;
+exports.add_to_cart = add_to_cart;

@@ -67,6 +67,7 @@ app.get('/report', admin.get_report);
 app.post('/add_mail_address', user.add_mail_address);
 app.post('/delete_address', user.delete_address);
 app.get('/get_notifications', user.get_notifications);
+app.post('/add_cart', cart.add_to_cart);
 
 
 http.createServer(app).listen(app.get('port'), function(){
