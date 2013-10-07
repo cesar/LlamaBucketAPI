@@ -334,6 +334,44 @@ var get_subcategories = function(req, res, next)
 	res.send(send_data);
 }
 
+var get_category = function(req, res,next)
+{
+	var id = req.param('id');
+
+	for(var i = 0; i < categories.content.length; i++)
+	{
+
+		if(categories.content[i].id == id)
+		{
+
+			res.send(categories.content[i]);
+			break;
+		}
+
+	}
+}
+
+var add_category = function(req, res, next)
+{
+	var new_category = {
+
+		id: req.body.id,
+		category : req.body.category,
+		parent: req.body.parent
+
+
+	}
+
+	console.log(new_category);
+
+	categories.content.push(new_category);
+	res.send(200);
+
+}
+
+exports.add_category = add_category;
+exports.get_category = get_category;
+
 exports.get_results = get_results;
 exports.get_categories = get_categories;
 exports.get_subcategories = get_subcategories;
