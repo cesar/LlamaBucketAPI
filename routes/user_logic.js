@@ -1,6 +1,8 @@
 //User logic.
 
 var user = {
+
+
 	first_name : 'César',
 	last_name : 'Cruz',
 	email : 'cesarcruz91@gmail.com',
@@ -18,9 +20,58 @@ var user = {
 	bill_zip : '00677',
 	image : 'https://fbcdn-sphotos-e-a.akamaihd.net/hphotos-ak-ash4/1009521_322256844573732_661186218_o.jpg',
 	cc_number : '2938 8493 1739 0394',
+
+	notifications:[
+
+
+	{
+		date: "Oct 03, 2013 - 12:21pm",
+		description: "Your bid on \"Coors Light 12 pack\" was outbidded",
+		link: ""
+
+
+	},
+	{
+		date: "Oct 04, 2013 - 2:01am",
+		description: "You won the bid on the new \"iPad 7\"",
+		link:""
+
+	},
+
+	{
+
+		date: "September 21, 2013 - 12:00am",
+		description: "Credit card ending with \"*0394\" has expired.",
+		link: ""
+	}
+
+
+	],
+
+	bids:[
+	{	
+		date: "October 2, 2013 - 2:10pm",
+		item_name: "Charizard",
+		amount: "$2.00",
+		seller: "Luis Medina",
+		img: ""
+
+
+
+	}
+
+
+
+
+
+
+
+	]
 };
 
-var addresses = { user_email : 'cesarcruz91@gmail.com',
+
+var addresses = {
+ user_email : 'cesarcruz91@gmail.com',
 content :[
 {
 	mail_address1 : '#311 Calle Ext. Los Robles',
@@ -44,6 +95,9 @@ content :[
 	mail_zip : '00666'
 }]
 };
+
+
+// User notifications
 
 /*
 *	Sign in the user.
@@ -106,6 +160,13 @@ var delete_address = function(req, res, next)
 	res.send(200);
 }
 
+var get_notifications = function(req, res,err)
+{
+
+	res.send(user.notifications);
+}
+
+exports.get_notifications = get_notifications;
 exports.sign_in = sign_in;
 exports.update_user = update_user;
 exports.user_addresses = user_addresses;
