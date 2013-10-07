@@ -52,6 +52,8 @@ var get_cart = function(req, res, err)
 
 var add_to_cart = function(req, res, next)
 {
+	req.body.price = parseFloat(req.body.price);
+	console.log(req.body);
 	user_data.content.push(req.body);
 	res.send(200);
 }
