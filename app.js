@@ -49,8 +49,10 @@ if ('development' == app.get('env')) {
 }
 
 //Routes
+app.post('/add_category', search.add_category);
 app.get('/search/:parameter', search.get_results);
 app.get('/categories', search.get_categories);
+app.get('/category/:id', search.get_category);
 app.get('/categories/:parent_id', search.get_subcategories);
 app.get('/item/:parameter', item.get_item);
 app.post('/sign_in', user.sign_in);
