@@ -9,6 +9,7 @@ var cart = require('./routes/cart_logic');
 var search = require('./routes/search_logic');
 var item = require('./routes/item_logic');
 var invoice = require('./routes/invoice_logic');
+var admin = require('./routes/admin_logic');
 var http = require('http');
 var path = require('path');
 
@@ -60,8 +61,12 @@ app.get('/cart', cart.get_cart);
 app.get('/checkout_address', cart.get_address);
 app.get('/invoice/:parameter', invoice.get_inv_from_id);
 app.get('/get_addresses', user.user_addresses);
+app.get('/users', admin.get_users);
+app.get('/users/:parameter', admin.get_individual);
+app.get('/report', admin.get_report);
 app.post('/add_mail_address', user.add_mail_address);
 app.post('/delete_address', user.delete_address);
+
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
