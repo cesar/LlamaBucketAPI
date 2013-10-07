@@ -53,10 +53,22 @@ var get_cart = function(req, res, err)
 var add_to_cart = function(req, res, next)
 {
 	req.body.price = parseFloat(req.body.price);
-	console.log(req.body);
 	user_data.content.push(req.body);
+	res.send(200);
+}
+
+var remove = function(req, res, next)
+{
+	for(var i = 0; i < user_data.content.length; i++)
+	{
+		if(user_data.content[i].name == req.body.name)
+		{
+			user_data.content.splice(i, 1);
+		}
+	}
 	res.send(200);
 }
 exports.get_cart = get_cart;
 exports.get_address = get_address;
 exports.add_to_cart = add_to_cart;
+exports.remove = remove;
