@@ -6,7 +6,7 @@ var user = {
 	first_name : 'César',
 	last_name : 'Cruz',
 	email : 'cesarcruz91@gmail.com',
-	password : 'fuckit', //This will be hashed.
+	password : 'forkit', //This will be hashed.
 	phone : '7874526702',
 	mail_address1 : '#311 Calle Ext. Los Robles',
 	mail_address2 : '',
