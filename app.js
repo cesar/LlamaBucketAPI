@@ -68,6 +68,8 @@ app.post('/add_mail_address', user.add_mail_address);
 app.post('/delete_address', user.delete_address);
 app.get('/get_notifications', user.get_notifications);
 app.post('/add_cart', cart.add_to_cart);
+app.get('/get_bids', user.get_bids);
+app.get('/get_listings', user.get_listings);
 
 
 http.createServer(app).listen(app.get('port'), function(){

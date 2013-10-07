@@ -54,14 +54,68 @@ var user = {
 		item_name: "Charizard",
 		amount: "$2.00",
 		seller: "Luis Medina",
-		img: ""
+		image: "http://cdn.bulbagarden.net/upload/thumb/7/7e/006Charizard.png/256px-006Charizard.png",
+		link: ""
 
 
 
+	},
+
+	{
+		date: "October 1, 2013 - 9:00pm",
+		item_name: "Sword",
+		amount: "$15.00",
+		seller: "Jose Martinez",
+		image: "http://images4.wikia.nocookie.net/__cb20130105173711/runescape/images/c/cb/Steel_sword_detail.png",
+		link: ""
+
+
+
+	},
+
+	{
+		date: "September 19, 2013 - 7:45am",
+		item_name: "Harry Potter: The Prisoner of Azkaban",
+		amount: "$13.50",
+		seller: "John Smith",
+		image: "http://upload.wikimedia.org/wikipedia/en/a/a0/Harry_Potter_and_the_Prisoner_of_Azkaban.jpg",
+		link:""
+	},
+	{
+		date: "September 12, 2013 - 8:45am",
+		item_name: "Suitcase",
+		amount: "$56.00",
+		seller: "Xin Perez",
+		image: "http://1.bp.blogspot.com/_MWG4tkTfz8M/SwvRjlHN66I/AAAAAAAAAVs/nKIUTHnKsFI/s320/Vintage_Suitcase_-_V%26M.jpg",
+		link:""
 	}
+	],
 
+	listings:[
+	{
 
+	  name : "Kick Ass Ball",
+	  description: "This is one kickass ball",
+	  date : "August 2, 2013",
+	  brand : "CoolShiii",
+	  category: "Toys",
+	  price : "Price: $2.35",
+	  image : "http://static.giantbomb.com/uploads/scale_small/0/6393/528516-1ball2.jpg",
+	  auction_flag: false
 
+	},
+	
+
+	{ name : "Nexus 4",
+	  description: "Because it's awesome!",
+	  date : "September 8, 2013",
+	  brand : "Google",
+	  category : "Tablets",
+	  price : "Current Bidding: $253.30",
+	  image : "http://www.notebookcheck.net/fileadmin/_migrated/pics/nexus4-1_02.png",
+	  auction_flag: false
+	}
+	
 
 
 
@@ -166,6 +220,19 @@ var get_notifications = function(req, res,err)
 	res.send(user.notifications);
 }
 
+var get_bids = function(req, res, err)
+{
+	res.send(user.bids);
+}
+
+var get_listings = function(req, res, err)
+{
+
+	res.send(user.listings);
+}
+
+exports.get_listings = get_listings;
+exports.get_bids = get_bids;
 exports.get_notifications = get_notifications;
 exports.sign_in = sign_in;
 exports.update_user = update_user;

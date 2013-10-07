@@ -53,7 +53,7 @@ var report = {
 	priceB: "200",
 	itemC : "Ipad Mini",
 	sellerC : "Fernan",
-	buyer : "Pepa",
+	buyerC : "Pepa",
 	priceC : "150",
 	itemD : "Ipod Touch",
 	sellerD : "Luis",

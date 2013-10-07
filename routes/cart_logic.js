@@ -5,7 +5,7 @@ var user_data =
 	{
 
 		name: "Baby Sloth",
-		description: "Baby sloth up for adoption, sign in your papers today!",
+		description: "Baby sloth, only 3 months old!",
 		image: "http://goo.gl/ffICmz",
 		price: 40
 	},
