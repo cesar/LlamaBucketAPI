@@ -1,6 +1,17 @@
 /*
 *	Ideally this is how the items will be passed to the client side.
 */
+
+var mysql = require('mysql');
+
+var connection = mysql.createConnection({
+  host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
+  user : process.env.CLEARDB_DATABASE_USERNAME, //Username
+  password : process.env.CLEARDB_DATABASE_PASSWORD,  //Password
+  database : process.env.CLEARDB_DATABASE,  //database name
+});
+
+
 var items = {
 	content : [
 	{ id : 0,
@@ -309,6 +320,11 @@ var get_results = function(req, res, next)
 
 var get_categories = function(req, res, next)
 {
+
+connection.query('SELECT * FROM test', function(err, rows){
+  console.log(rows);
+  console.log(err);
+});
 	res.send(categories);
 }
 

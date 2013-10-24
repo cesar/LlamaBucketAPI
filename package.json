@@ -10,6 +10,7 @@
     "npm": "1.3.x"
   },
   "dependencies": {
-    "express": "3.4.0"
+    "express": "3.4.0",
+    "mysql" : "*"
   }
 }
