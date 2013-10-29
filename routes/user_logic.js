@@ -1,4 +1,18 @@
-//User logic.
+/*
+* ============================================
+*	All logic related to the user on the server |
+* ============================================
+*/
+
+var mysql = require('mysql');
+
+var connection = mysql.createConnection({
+  host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
+  user : process.env.CLEARDB_DATABASE_USERNAME, //Username
+  password : process.env.CLEARDB_DATABASE_PASSWORD,  //Password
+  database : process.env.CLEARDB_DATABASE,  //database name
+});
+
 
 var user = {
 
@@ -124,48 +138,26 @@ var user = {
 };
 
 
-var addresses = {
- user_email : 'cesarcruz91@gmail.com',
-content :[
-{
-	mail_address1 : '#311 Calle Ext. Los Robles',
-	mail_address2 : '',
-	mail_city : 'Rincon',
-	mail_state : 'Puerto Rico',
-	mail_zip : '00677'
-},
-{
-	mail_address1 : '#455 Calle Ext. Los Giraldas',
-	mail_address2 : '',
-	mail_city : 'Comerio',
-	mail_state : 'Puerto Rico',
-	mail_zip : '00787'
-},
-{
-	mail_address1 : '#666 Calle Sodoma Ext. Gomorra',
-	mail_address2 : '',
-	mail_city : 'Juncos',
-	mail_state : 'Puerto Rico',
-	mail_zip : '00666'
-}]
-};
-
-
 // User notifications
 
 /*
-*	Sign in the user.
+*	Check the user credentials for a sign in, no hashing whatsoever so far.
 */
 var sign_in = function(req, res, next)
 {
-	if(req.body.username == user.email && req.body.password == user.password)
-	{
-		res.send(user);
-	}
-	else
-	{
-		res.send({error : 'dumbass'});
-	}
+
+	connection.query('select * from client natural join address where client.email = '+connection.escape(req.body.username) +'and address.is_primary = 1', function(err, rows){
+		if (!err)
+			if(rows[0].password == req.body.password)
+				res.send(rows[0])
+			else
+				res.send({error : 'Incorrect'});
+		else{
+			console.log(err);
+			res.send({error : 'dumbass'});
+		}
+			console.log(err);
+	})
 }
 
 /**
@@ -180,14 +172,21 @@ var update_user = function(req, res, next)
 	res.send(user);
 }
 
+/*
+*	Get the addresses for a specific user
+*/
 var user_addresses = function(req, res, next)
 {
-	res.send(addresses);
+	connection.query('select * from address where client_id = '+connection.escape(req.param('id')), function(err, rows){
+		if(!err)
+			res.send({ content : rows});
+		else
+			res.send('Error');
+	});
 }
 
 var add_mail_address = function(req, res, next)
 {
-	console.log(req.body);
 	var new_address = {
 		mail_address1 : req.body.address1,
 		mail_address2 : req.body.address2,
