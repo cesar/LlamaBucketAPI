@@ -7,6 +7,7 @@ var routes = require('./routes');
 var user = require('./routes/user_logic');
 var cart = require('./routes/cart_logic');
 var search = require('./routes/search_logic');
+var category = require('./routes/category_logic');
 var item = require('./routes/item_logic');
 var invoice = require('./routes/invoice_logic');
 var admin = require('./routes/admin_logic');
@@ -49,19 +50,42 @@ if ('development' == app.get('env')) {
 }
 
 //Routes
-app.post('/add_category', search.add_category);
-app.get('/search/:parameter', search.get_results);
-app.get('/categories', search.get_categories);
-app.get('/category/:id', search.get_category);
-app.get('/categories/:parent_id', search.get_subcategories);
-app.get('/item/:parameter', item.get_item);
-app.post('/sign_in', user.sign_in);
-app.post('/update_user_info', user.update_user);
+
+/*
+* =============================
+*           Categories         |
+* =============================
+*/
+
+app.post('/add_category', category.add_category);
+app.get('/categories', category.get_categories);
+app.get('/category/:id', category.get_category);
+app.get('/categories/:parent_id', category.get_subcategories);
+
+/*
+* =============================
+*              Items           |
+* =============================
+*/
 app.get('/item', item.get_item);
+app.get('/item/:parameter', item.get_item);
 app.get('/invoice', invoice.get_invoice);
 app.get('/cart', cart.get_cart);
-app.get('/checkout_address', cart.get_address);
 app.get('/invoice/:parameter', invoice.get_inv_from_id);
+app.post('/add_cart', cart.add_to_cart);
+app.post('/remove_from_cart', cart.remove);
+app.get('/checkout_address', cart.get_address);
+app.get('/search/:parameter', search.get_results);
+
+
+/*
+* =============================
+*               User           |
+* =============================
+*/
+
+app.post('/sign_in', user.sign_in);
+app.post('/update_user_info', user.update_user);
 app.get('/get_addresses', user.user_addresses);
 app.get('/users', admin.get_users);
 app.get('/users/:parameter', admin.get_individual);
@@ -69,12 +93,14 @@ app.get('/report', admin.get_report);
 app.post('/add_mail_address', user.add_mail_address);
 app.post('/delete_address', user.delete_address);
 app.get('/get_notifications', user.get_notifications);
-app.post('/add_cart', cart.add_to_cart);
 app.get('/get_bids', user.get_bids);
 app.get('/get_listings', user.get_listings);
-app.post('/remove_from_cart', cart.remove);
 
-
+/*
+* =============================
+*       Create the server      |
+* =============================
+*/
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
