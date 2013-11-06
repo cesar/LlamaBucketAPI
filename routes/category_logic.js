@@ -67,6 +67,10 @@ var get_category = function(req, res,next)
       console.log(err);
   });
 }
+/*
+* =================================================================== Use transactions ?
+*
+*/
 
 /*
 * Add a category to the list of categories.

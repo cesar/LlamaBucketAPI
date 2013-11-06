@@ -129,11 +129,6 @@ var user = {
 	  image : "http://www.notebookcheck.net/fileadmin/_migrated/pics/nexus4-1_02.png",
 	  auction_flag: false
 	}
-	
-
-
-
-
 	]
 };
 
@@ -216,12 +211,18 @@ var delete_address = function(req, res, next)
 var get_notifications = function(req, res,err)
 {
 
-	res.send(user.notifications);
 }
 
 var get_bids = function(req, res, err)
 {
-	res.send(user.bids);
+	console.log(req.param('client_id'));
+	connection.query('select distinct * from bidding_history where bidder_id = '+connection.escape(req.param('client_id')), function(err, rows)
+	{
+		if (!err)
+			res.send({content : rows});
+		else
+			console.log(err);
+	});
 }
 
 var get_listings = function(req, res, err)

@@ -3,7 +3,7 @@
  */
 
 var express = require('express');
-var routes = require('./routes');
+// var routes = require('./routes');
 var user = require('./routes/user_logic');
 var cart = require('./routes/cart_logic');
 var search = require('./routes/search_logic');
@@ -93,7 +93,7 @@ app.get('/report', admin.get_report);
 app.post('/add_mail_address', user.add_mail_address);
 app.post('/delete_address', user.delete_address);
 app.get('/get_notifications', user.get_notifications);
-app.get('/get_bids', user.get_bids);
+app.get('/get_bids/:client_id', user.get_bids);
 app.get('/get_listings', user.get_listings);
 
 /*
