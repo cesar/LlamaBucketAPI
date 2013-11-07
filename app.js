@@ -85,6 +85,7 @@ app.get('/search/:parameter', search.get_results);
 */
 
 app.post('/sign_in', user.sign_in);
+app.get('/profile/:user_id', user.get_profile);
 app.post('/update_user_info', user.update_user);
 app.get('/get_addresses/:id', user.user_addresses);
 app.get('/users', admin.get_users);

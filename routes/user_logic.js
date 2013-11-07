@@ -155,6 +155,42 @@ var sign_in = function(req, res, next)
 	})
 }
 
+//Get the user profile
+var get_profile = function(req, res, next)
+{
+	//Get the necesary user information, arrange correctly as a JSON, send to client.
+	var query = 'select client_firstname, client_lastname, email, phone, avg_rank, address_1, address_2, city, zip_code, state, country, cc_number, cc_type from client natural join (select rankee_id, avg(rank) as avg_rank from user_ranking where rankee_id = '
+		+connection.escape(req.params.user_id)+') as t1  natural join (select address_1, address_2, city, zip_code, state, country, client_id from address where is_primary = 1 and client_id = '
+		+connection.escape(req.params.user_id)+') as t2 natural join (select client_id, cc_number, cc_type from credit_card where client_id = '
+		+connection.escape(req.params.user_id)+' and is_primary = 1) as t3 where client_id = '+connection.escape(req.params.user_id);
+	
+	connection.query(query, function(err, user)
+	{
+		if(!err)
+		{
+			var send_data = {
+				name : user[0].client_firstname + ' ' + user[0].client_lastname,
+				email : user[0].email,
+				rank : user[0].avg_rank,
+				phone : user[0].phone,
+				image : user[0].image,
+				credit_card : user[0].cc_number.substring(12), 
+				credit_card_type : user[0].cc_type,
+				address_1 : user[0].address_1,
+				address_2 : user[0].address_2,
+				city : user[0].city,
+				state : user[0].state,
+				zip_code : user[0].zip_code,
+				contry : user[0].country
+			};
+
+			res.send(send_data);
+		}
+		else
+			throw err;
+	});
+}
+
 /**
 *	Modify the user and send the new user to the client.
 */
@@ -239,6 +275,7 @@ exports.update_user = update_user;
 exports.user_addresses = user_addresses;
 exports.add_mail_address = add_mail_address;
 exports.delete_address = delete_address;
+exports.get_profile = get_profile;
 
 
 
