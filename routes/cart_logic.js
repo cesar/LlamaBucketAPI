@@ -1,53 +1,35 @@
+var mysql = require('mysql');
 
-var user_data =
-{
-	content:[
-	{
+var connection = mysql.createConnection({
+  host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
+  user : process.env.CLEARDB_DATABASE_USERNAME, //Username
+  password : process.env.CLEARDB_DATABASE_PASSWORD,  //Password
+  database : process.env.CLEARDB_DATABASE,  //database name
+});
 
-		name: "Baby Sloth",
-		description: "Baby sloth, only 3 months old!",
-		image: "http://goo.gl/ffICmz",
-		price: 40
-	},
-		{
-
-		name: "iWallet",
-		description: "New and improved Apple Leather iWallet",
-		image: "http://goo.gl/uMaaZq",
-		price: 210
-	}
-	],
-	address:
-	[
-	{
-		address_one: "Calle Reina Maria 139",
-		address_two: "Urb. La Villa de Torrimar",
-		city: "Guaynabo",
-		zipcode: "00969",
-		country: "Puerto Rico"
-	}
-
-	],
-	credit_cards:
-	[
-		{
-			credit_card_number: 1234565687871929,
-			cardholder: "John Smith",
-			expiration_date: "08/16",
-			type: "Visa"
-
-		}
-	]
-};
 
 
 var get_address = function(req,res, err)
 {
 	res.send(user_data);
 }
+
+/**
+*	GET the contents of the users bucket. 
+*/
 var get_cart = function(req, res, err)
 {
-	res.send(user_data);
+	var query = 'select * from item natural join (select item_id, price_buy, listing_id from listing where is_active = 1 and is_auction = "buy" or is_auction = "both") as t1 natural join (select listing_id, client_id from bucket where client_id = '
+		+connection.escape(req.params.id)+') as t2';
+	connection.query(query, function(err, items)
+	{
+		if (!err)
+		{
+			res.send(content : items);
+		}
+		else
+			throw err
+	});
 }
 
 var add_to_cart = function(req, res, next)
@@ -71,4 +53,11 @@ var remove = function(req, res, next)
 exports.get_cart = get_cart;
 exports.get_address = get_address;
 exports.add_to_cart = add_to_cart;
-exports.remove = remove;
+var mysql = require('mysql');
+
+var connection = mysql.createConnection({
+  host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
+  user : process.env.CLEARDB_DATABASE_USERNAME, //Username
+  password : process.env.CLEARDB_DATABASE_PASSWORD,  //Password
+  database : process.env.CLEARDB_DATABASE,  //database name
+});exports.remove = remove;

@@ -15,7 +15,7 @@ var connection = mysql.createConnection({
 var get_item = function(req, res, next){
 	
 
-		connection.query('select * from item natural join listing natural join client natural join category join address where client.client_id = seller_id and cat_id = item_category and address_id = src_address and item_id ='+req.params.parameter, function(err, rows){
+		connection.query('select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join client natural join address natural join category where item_id ='+req.params.parameter+' and item_category = cat_id) as T ON address_id = src_address and B.listing_id = T.listing_id group by T.listing_id',function(err, rows){
 				console.log("Hello WOrld!");
 				res.send(rows[0]);
 				console.log(rows[0]);
