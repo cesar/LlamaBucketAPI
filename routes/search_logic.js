@@ -35,8 +35,9 @@ var get_results = function(req, res, next)
 
 		//Here is where the DB query should normally go.
 		//NOTE: Makes this asynchronous later.
-		connection.query('select * from item where item_category = '+connection.escape(cat), function(err, rows){
+		connection.query('select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item where item_category='+connection.escape(cat)+') as T ON B.listing_id = T.listing_id group by T.listing_id', function(err, rows){
 				res.send({content : rows});
+				console.log({content:rows});
 		});
 	}
 
@@ -46,9 +47,11 @@ var get_results = function(req, res, next)
 
 		search_terms = '%' + search_terms[1] + '%'
 		
-		connection.query('select * from item where item_name like '+connection.escape(search_terms), function(err, rows){
-			if(!err)
+		connection.query('select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item where item_name like '+connection.escape(search_terms)+') as T ON B.listing_id = T.listing_id group by T.listing_id', function(err, rows){
+			if(!err){
 				res.send({content : rows});
+							console.log({content:rows});
+						}
 			else
 				console.log(err);
 		});
