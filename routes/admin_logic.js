@@ -7,6 +7,8 @@ var connection = mysql.createConnection({
   	database : process.env.CLEARDB_DATABASE,  //database name
 });
 
+var datetime = new Date();
+
 var get_users = function(req, res, next){
 	connection.query('SELECT client_id, client_firstname, client_lastname, email, isAdmin FROM client', function(err, rows){
 		console.log("Getting users from db...");
@@ -16,15 +18,38 @@ var get_users = function(req, res, next){
 }
 var get_individual = function(req, res, next){
 	
-		connection.query('SELECT client_id, client_firstname, client_lastname, email, isAdmin FROM client WHERE client_id=' + req.params.parameter, function(err, rows){
+	connection.query('SELECT client_id, client_firstname, client_lastname, email, isAdmin FROM client WHERE client_id=' + req.params.parameter, function(err, rows){
 		console.log("Getting users from db...");
 		res.send(rows[0]);
 		console.log(rows[0]);
 	});
 }
-var get_report = function(req, res, next){
-	//res.send(report.content);
+var get_report_total_sales_day = function(req, res, next){
+	connection.query('select * from invoice where date_day=' + req.params.parameter, function(err, rows){
+		console.log("Getting invoices from DB...");
+		res.send(rows[0]);
+		console.log(rows[0]);
+	});
 }
-exports.get_report = get_report;
+var get_report_total_sales_week = function(req, res, next){
+	connection.query('select * from invoice where date_week=' + req.params.parameter, function(err, rows){
+		console.log("Getting invoices from DB...");
+		res.send(rows[0]);
+		console.log(rows[0]);
+	});
+}
+var get_report_total_sales_month = function(req, res, next){
+	connection.query('select * from invoice where date_month=' + req.params.parameter, function(err, rows){
+		console.log("Getting invoices from DB...");
+		res.send(rows[0]);
+		console.log(rows[0]);
+	});
+}
+
+
+exports.get_report_total_sales_day = get_report_total_sales_day;
+exports.get_report_total_sales_week = get_report_total_sales_week;
+exports.get_report_total_sales_month = get_report_total_sales_month;
+
 exports.get_individual = get_individual;
 exports.get_users = get_users;

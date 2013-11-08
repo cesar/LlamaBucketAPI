@@ -89,14 +89,24 @@ app.get('/profile/:user_id', user.get_profile);
 app.post('/update_user_info', user.update_user);
 app.get('/get_addresses/:id', user.user_addresses);
 app.get('/get_credit_cards/:id', user.get_credit_cards);
-app.get('/users', admin.get_users);
-app.get('/users/:parameter', admin.get_individual);
-app.get('/report', admin.get_report);
 app.post('/add_mail_address', user.add_mail_address);
 app.post('/delete_address', user.delete_address);
 app.get('/get_notifications', user.get_notifications);
 app.get('/get_bids/:client_id', user.get_bids);
 app.get('/get_listings', user.get_listings);
+
+/*
+* =============================
+*              Admin           |
+* =============================
+*/
+
+app.get('/users', admin.get_users);
+app.get('/users/:parameter', admin.get_individual);
+app.get('/report/day/:day', admin.get_report_total_sales_day);
+app.get('/report/week/:week', admin.get_report_total_sales_week);
+app.get('/report/month/:month', admin.get_report_total_sales_month);
+
 
 /*
 * =============================
