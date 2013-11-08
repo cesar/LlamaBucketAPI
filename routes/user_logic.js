@@ -159,7 +159,7 @@ var sign_in = function(req, res, next)
 var get_profile = function(req, res, next)
 {
 	//Get the necesary user information, arrange correctly as a JSON, send to client.
-	var query = 'select client_firstname, client_lastname, email, phone, avg_rank, address_1, address_2, city, zip_code, state, country, cc_number, cc_type from client natural join (select rankee_id, avg(rank) as avg_rank from user_ranking where rankee_id = '
+	var query = 'select client_firstname, client_lastname, client_image, email, phone, avg_rank, address_1, address_2, city, zip_code, state, country, cc_number, cc_type from client natural join (select rankee_id, avg(rank) as avg_rank from user_ranking where rankee_id = '
 		+connection.escape(req.params.user_id)+') as t1  natural join (select address_1, address_2, city, zip_code, state, country, client_id from address where is_primary = 1 and client_id = '
 		+connection.escape(req.params.user_id)+') as t2 natural join (select client_id, cc_number, cc_type from credit_card where client_id = '
 		+connection.escape(req.params.user_id)+' and is_primary = 1) as t3 where client_id = '+connection.escape(req.params.user_id);
@@ -173,7 +173,7 @@ var get_profile = function(req, res, next)
 				email : user[0].email,
 				rank : user[0].avg_rank,
 				phone : user[0].phone,
-				image : user[0].image,
+				image : user[0].client_image,
 				credit_card : user[0].cc_number.substring(12), 
 				credit_card_type : user[0].cc_type,
 				address_1 : user[0].address_1,
