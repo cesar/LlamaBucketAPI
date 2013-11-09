@@ -25,7 +25,19 @@ var get_cart = function(req, res, err)
 	{
 		if (!err)
 		{
-			res.send(content : items);
+			var total_price = 0;
+
+			for(var i = 0; i < items.length; i++)
+			{
+				total_price = total_price + items[i].price_buy;
+			}
+
+			var send_data = {
+				items : items,
+				sum_price : total_price
+			}
+
+			res.send(send_data);
 		}
 		else
 			throw err
