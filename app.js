@@ -72,6 +72,7 @@ app.get('/item/:parameter', item.get_item);
 app.get('/invoice', invoice.get_invoice);
 
 app.get('/cart/:id', cart.get_cart);
+app.get('/checkout/bucket/:id', cart.bucket_checkout);
 
 app.get('/invoice/:parameter', invoice.get_inv_from_id);
 app.post('/add_cart', cart.add_to_cart);
