@@ -59,7 +59,8 @@ var bucket_checkout  = function(req, res, next)
 			var send_data = {
 				items : [],
 				primary_address : {},
-				primary_credit_card : {}
+				primary_credit_card : {},
+				order_amount : 0,
 			}
 
 			//Get all the infor from the items in the bucket
@@ -72,6 +73,7 @@ var bucket_checkout  = function(req, res, next)
 						image : info[i].item_image,
 						price : info[i].price_buy
 					});
+				send_data.order_amount = send_data.order_amount + info[i].price_buy
 			}
 
 			//Set the users primary shipping address
