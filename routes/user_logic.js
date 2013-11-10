@@ -21,13 +21,11 @@ var connection = mysql.createConnection({
 */
 var sign_in = function(req, res, next)
 {
-	console.log(req.body);
 	var query = 'select password, client_id from client where email = ' + connection.escape(req.body.email);
 
 	connection.query(query, function(err, user){
 		if (!err)
 		{
-			console.log(user);
 			if(user[0].password == req.body.password)
 			{
 				var send_data = {
@@ -44,6 +42,8 @@ var sign_in = function(req, res, next)
 			res.send({error : 'Not Found'});
 		}
 	});
+
+	connection.end();
 }
 
 //Get the user profile
@@ -80,6 +80,8 @@ var get_profile = function(req, res, next)
 		else
 			throw err;
 	});
+
+	connection.end();
 }
 
 /**
@@ -105,6 +107,8 @@ var user_addresses = function(req, res, next)
 		else
 			res.send('Error');
 	});
+
+	connection.end();
 }
 
 var get_credit_cards = function(req, res, next)
@@ -137,7 +141,9 @@ var get_credit_cards = function(req, res, next)
 		}
 		else
 			throw err;
-	})
+	});
+
+	connection.end();
 }
 
 var add_mail_address = function(req, res, next)
@@ -183,6 +189,8 @@ var get_bids = function(req, res, err)
 		else
 			console.log(err);
 	});
+
+	connection.end();
 }
 
 var get_listings = function(req, res, err)
@@ -198,6 +206,8 @@ var get_listings = function(req, res, err)
 				console.log(err);
 			}
 		});
+
+		connection.end();
 
 }
 
