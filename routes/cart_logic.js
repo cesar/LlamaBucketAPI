@@ -1,4 +1,5 @@
 var mysql = require('mysql');
+var async = require('async');
 
 var connection = mysql.createConnection({
   host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
@@ -101,6 +102,86 @@ var bucket_checkout  = function(req, res, next)
 	});
 }
 
+/**
+*	GET item for checkout
+*/
+var item_checkout  = function(req, res, next)
+{	
+	var parameters = req.params.parameter.split('-');
+
+	//Second item in the array represents the client_id
+	var client_id = connection.escape(parseInt(parameters[1]));
+
+	//First item in the array represents the item_id
+	var item_id = connection.escape(parseInt(parameters[0]));
+
+	var query_1 = 'select address_1, address_2, city, zip_code, state, country, cc_number, cc_type from address natural join credit_card where client_id = '
+	+client_id+' and is_primary = 1';
+
+	var query_2 = 'select item_name, item_image, item_description, price_buy from item natural join listing where item_id = '+ item_id;
+	;
+
+	async.parallel([
+		function(callback){
+			connection.query(query_1, function(err, info)
+				{
+					if (!err)
+					{
+						//Everything went smoothly. 
+						callback(null, info);
+					}
+					else
+					{
+						//There was an error
+						callback(err, null);
+					}
+				});
+		}, 
+		function(callback){
+			connection.query(query_2, function(err, item)
+			{
+				if (!err)
+				{
+					callback(null, item)
+				}
+				else
+				{
+					callback(err, null);
+				}
+			});
+		}],
+		//Callback
+		function(err, results){
+			if (!err)
+			{
+				var send_data = {
+					primary_credit_card  : {
+						number : results[0][0].cc_number.substring(12),
+						type : results[0][0].cc_type
+					},
+					primary_address : {
+						address_1 : results[0][0].address_1,
+						address_2 : results[0][0].address_2,
+						city : results[0][0].city,
+						state : results[0][0].state,
+						zip_code : results[0][0].zip_code,
+						country : results[0][0].country
+					},
+					item : {
+						name : results[1][0].item_name,
+						image : results[1][0].item_image,
+						description : results[1][0].item_description,
+						price : results[1][0].price_buy
+					}
+				};
+				res.send(send_data);
+			}
+			else
+			{
+				throw err;
+			}
+		});
+}
 var add_to_cart = function(req, res, next)
 {
 	req.body.price = parseFloat(req.body.price);
@@ -121,6 +202,7 @@ var remove = function(req, res, next)
 }
 exports.get_cart = get_cart;
 exports.bucket_checkout = bucket_checkout;
+exports.item_checkout = item_checkout;
 exports.get_address = get_address;
 exports.add_to_cart = add_to_cart;
 exports.remove = remove;
