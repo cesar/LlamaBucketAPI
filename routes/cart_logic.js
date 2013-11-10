@@ -25,7 +25,7 @@ var get_cart = function(req, res, err)
 	{
 		if (!err)
 		{
-			res.send(content : items);
+			res.send({content : items});
 		}
 		else
 			throw err

@@ -35,7 +35,7 @@ var get_results = function(req, res, next)
 
 		//Here is where the DB query should normally go.
 		//NOTE: Makes this asynchronous later.
-		connection.query('select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item where item_category='+connection.escape(cat)+') as T ON B.listing_id = T.listing_id group by T.listing_id', function(err, rows){
+		connection.query('select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category='+connection.escape(cat)+' and item_category = cat_id) as T ON B.listing_id = T.listing_id group by T.listing_id', function(err, rows){
 				res.send({content : rows});
 				console.log({content:rows});
 		});

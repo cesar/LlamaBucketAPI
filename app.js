@@ -95,7 +95,7 @@ app.post('/add_mail_address', user.add_mail_address);
 app.post('/delete_address', user.delete_address);
 app.get('/get_notifications', user.get_notifications);
 app.get('/get_bids/:client_id', user.get_bids);
-app.get('/get_listings', user.get_listings);
+app.get('/get_listings/:client_id', user.get_listings);
 
 /*
 * =============================
