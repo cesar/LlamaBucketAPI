@@ -16,14 +16,14 @@ var thisYear = datetime.getFullYear();
 var get_users = function(req, res, next){
 	connection.query('SELECT client_id, client_firstname, client_lastname, email, isAdmin FROM client', function(err, rows){
 		console.log("Getting users from db...");
-		res.send(rows[0]);
-		console.log(rows[0]);
+		res.send(rows);
+		console.log(rows);
 	});
 }
 var get_individual = function(req, res, next){
 	
-	connection.query('SELECT client_id, client_firstname, client_lastname, email, isAdmin FROM client WHERE client_id=' + req.params.parameter, function(err, rows){
-		console.log("Getting users from db...");
+	connection.query('SELECT client_id, client_firstname, client_lastname, email, phone, isAdmin, address_1, address_2, city, country, zip_code  FROM client natural join address WHERE address.is_primary = 1 and client.client_id=' + req.params.parameter, function(err, rows){
+		console.log("Getting user from db...");
 		res.send(rows[0]);
 		console.log(rows[0]);
 	});
