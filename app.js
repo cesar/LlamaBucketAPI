@@ -81,6 +81,9 @@ app.post('/add_cart', cart.add_to_cart);
 app.post('/remove_from_cart', cart.remove);
 app.get('/checkout_address', cart.get_address);
 app.get('/search/:parameter', search.get_results);
+app.get('/filter_results', search.get_filtered_results);
+
+
 
 
 /*
@@ -99,6 +102,7 @@ app.post('/delete_address', user.delete_address);
 app.get('/get_notifications', user.get_notifications);
 app.get('/get_bids/:client_id', user.get_bids);
 app.get('/get_listings/:client_id', user.get_listings);
+
 
 /*
 * =============================
