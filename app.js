@@ -108,9 +108,9 @@ app.get('/get_listings/:client_id', user.get_listings);
 
 app.get('/users', admin.get_users);
 app.get('/users/:parameter', admin.get_individual);
-app.get('/report/day/:day', admin.get_report_total_sales_day);
-app.get('/report/week/:week', admin.get_report_total_sales_week);
-app.get('/report/month/:month', admin.get_report_total_sales_month);
+app.get('/reportday', admin.get_report_total_sales_day);
+app.get('/reportweek', admin.get_report_total_sales_week);
+app.get('/reportmonth', admin.get_report_total_sales_month);
 
 
 /*
