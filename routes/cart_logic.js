@@ -26,6 +26,7 @@ var get_cart = function(req, res, err)
 	{
 		if (!err)
 		{
+
 			var total_price = 0;
 
 			for(var i = 0; i < items.length; i++)

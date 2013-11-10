@@ -187,8 +187,18 @@ var get_bids = function(req, res, err)
 
 var get_listings = function(req, res, err)
 {
+		connection.query( 'select distinct * from client natural join listing natural join item where client_id = seller_id and client_id ='+ connection.escape(req.param('client_id')),function(err, rows){
 
-	res.send(user.listings);
+			if(!err)
+			{
+				res.send({content:rows});
+			}
+			else{
+
+				console.log(err);
+			}
+		});
+
 }
 
 exports.get_listings = get_listings;
