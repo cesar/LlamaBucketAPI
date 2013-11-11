@@ -177,10 +177,13 @@ var get_notifications = function(req, res,err)
 var get_bids = function(req, res, err)
 {
 	console.log(req.param('client_id'));
-	connection.query('select distinct * from bidding_history where bidder_id = '+connection.escape(req.param('client_id')), function(err, rows)
+	connection.query('select * from bidding_history natural join listing natural join item where bidder_id ='+connection.escape(req.param('client_id'))+' group by listing_id ', function(err, rows)
 	{
-		if (!err)
+		if (!err){
 			res.send({content : rows});
+			console.log({content: rows});
+		}
+
 		else
 			console.log(err);
 	});
