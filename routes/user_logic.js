@@ -183,10 +183,13 @@ var get_notifications = function(req, res,err)
 var get_bids = function(req, res, err)
 {
 	console.log(req.param('client_id'));
-	connection.query('select distinct * from bidding_history where bidder_id = '+connection.escape(req.param('client_id')), function(err, rows)
+	connection.query('select * from bidding_history natural join listing natural join item where bidder_id ='+connection.escape(req.param('client_id'))+' group by listing_id ', function(err, rows)
 	{
-		if (!err)
+		if (!err){
 			res.send({content : rows});
+			console.log({content: rows});
+		}
+
 		else
 			console.log(err);
 	});
@@ -195,12 +198,13 @@ var get_bids = function(req, res, err)
 }
 
 var get_listings = function(req, res, err)
-{
-		connection.query( 'select distinct * from client natural join listing natural join item where client_id = seller_id and client_id ='+ connection.escape(req.param('client_id')),function(err, rows){
+{		var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item where seller_id ='+ connection.escape(req.param('client_id'))+') as T ON B.listing_id = T.listing_id group by T.listing_id';
+		connection.query( query,function(err, rows){
 
 			if(!err)
 			{
 				res.send({content:rows});
+				console.log({content:rows});
 			}
 			else{
 
