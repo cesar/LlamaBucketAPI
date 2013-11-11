@@ -21,7 +21,7 @@ var connection = mysql.createConnection({
 */
 var sign_in = function(req, res, next)
 {
-	var query = 'select password, client_id from client where email = ' + connection.escape(req.body.email);
+	var query = 'select password, client_id, isAdmin from client where email = ' + connection.escape(req.body.email);
 
 	connection.query(query, function(err, user){
 		if (!err)
@@ -32,6 +32,7 @@ var sign_in = function(req, res, next)
 					id : user[0].client_id,
 					isAdmin: user[0].isAdmin
 				}
+				console.log(send_data);
 				res.send(send_data);
 			}
 			else
@@ -44,7 +45,7 @@ var sign_in = function(req, res, next)
 		}
 	});
 
-	connection.end();
+	;
 }
 
 //Get the user profile
@@ -82,7 +83,7 @@ var get_profile = function(req, res, next)
 			throw err;
 	});
 
-	connection.end();
+	;
 }
 
 /**
@@ -101,7 +102,7 @@ var update_user = function(req, res, next)
 *	Get the addresses for a specific user
 */
 var user_addresses = function(req, res, next)
-{
+{	;
 	connection.query('select * from address where client_id = '+connection.escape(req.param('id')), function(err, rows){
 		if(!err)
 			res.send({ content : rows});
@@ -109,11 +110,11 @@ var user_addresses = function(req, res, next)
 			res.send('Error');
 	});
 
-	connection.end();
+	;
 }
 
 var get_credit_cards = function(req, res, next)
-{
+{	;
 	var query = 'select cc_number, cc_type, cc_exp_date, cc_holder, address_1, address_2, city, state, country, zip_code from credit_card natural join (select address_id as billing_address, address_1, address_2, city, zip_code, country, state from address) as t1 where client_id = '
 	+connection.escape(req.params.id)+';'
 
@@ -144,7 +145,7 @@ var get_credit_cards = function(req, res, next)
 			throw err;
 	});
 
-	connection.end();
+	;
 }
 
 var add_mail_address = function(req, res, next)
@@ -181,7 +182,7 @@ var get_notifications = function(req, res,err)
 }
 
 var get_bids = function(req, res, err)
-{
+{	;
 	console.log(req.param('client_id'));
 	connection.query('select * from bidding_history natural join listing natural join item where bidder_id ='+connection.escape(req.param('client_id'))+' group by listing_id ', function(err, rows)
 	{
@@ -194,11 +195,13 @@ var get_bids = function(req, res, err)
 			console.log(err);
 	});
 
-	connection.end();
+
 }
 
 var get_listings = function(req, res, err)
 {		var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item where seller_id ='+ connection.escape(req.param('client_id'))+') as T ON B.listing_id = T.listing_id group by T.listing_id';
+		
+		;
 		connection.query( query,function(err, rows){
 
 			if(!err)
@@ -212,7 +215,7 @@ var get_listings = function(req, res, err)
 			}
 		});
 
-		connection.end();
+		
 
 }
 

@@ -90,9 +90,14 @@ var get_filtered_results = function(req, res, next)
 	connection.query(query, function(err, rows)
 	{
 
-
+		if(!err){
 		res.send({content: rows});
 		console.log({content: rows});
+	}
+		else{
+
+			console.log(err);
+		}
 	});
 
 }
@@ -176,10 +181,13 @@ console.log(req.body);
 	console.log(query);
 	connection.query(query, function(err, rows)
 	{
-
+		if(!err){
 
 		res.send({content: rows});
 		console.log({content: rows});
+	}
+
+	else{console.log(err);}
 	});
 
 }
