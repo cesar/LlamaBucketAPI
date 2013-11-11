@@ -206,13 +206,46 @@ var place_order_bucket = function(req, res, next)
 {
 	var today = new Date();
 
-	var query = 'select * from item natural join (select item_id, listing_id, price from listing where is_active = 1) as t1 natural join (select listing_id, client_id from bucket where client_id = '
-		+connection.escape(req.params.parameter)+') as t2 natural join (select client_id, address_1, address_2, city, state, country, zip_code from address where is_primary = 1) as t3 natural join (select client_id, cc_number, cc_type, billing_address from credit_card where is_primary = 1) as t4;'
+	var query_1 = 'select * from item natural join (select item_id, listing_id, seller_id, price from listing where is_active = 1) as t1 natural join (select listing_id from bucket where client_id = '
+		+connection.escape(req.params.parameter)+') as t2 natural join (select client_firstname, client_lastname, client_id as seller_id from client) as t3;'
+
+	var query_2 = 'select * from address natural join (select client_id, cc_number, cc_type from credit_card) as t1 where client_id = '
+	+connection.escape(req.params.parameter)+' and is_primary = 1; '
 	
-	connection.query(query, function(err, info)
-	{
-		if (!err)
+	async.parallel([
+		function(callback)
 		{
+			connection.query(query_1, function(err, items)
+			{
+				if (!err)
+				{
+					callback(null, items);
+				}
+				else
+				{
+					callback(err, null);
+				}
+			})
+		},
+		function(callback)
+		{
+			connection.query(query_2, function(err, user_info)
+			{
+				if (!err)
+				{
+					callback(null, user_info);
+				}
+
+				else
+				{
+					callback(err, null);
+				}
+			})
+
+		}],
+		function(err, results)
+		{
+
 			var send_data = {
 				items : [],
 				primary_address : {},
@@ -222,38 +255,37 @@ var place_order_bucket = function(req, res, next)
 			}
 
 			//Get all the info from the items in the bucket
-			for(var i = 0; i < info.length; i++)
+			for(var i = 0; i < results[0].length; i++)
 			{
 				send_data.items.push(
 					{
-						id : info[i].item_id,
-						name : info[i].item_name,
-						description : info[i].item_description,
-						image : info[i].item_image,
-						price : info[i].price
+						id : results[0][i].item_id,
+						name : results[0][i].item_name,
+						description : results[0][i].item_description,
+						image : results[0][i].item_image,
+						price : results[0][i].price,
+						seller : results[0][i].client_firstname + ' ' +results[0][i].client_lastname
 					});
-				send_data.order_amount = send_data.order_amount + info[i].price
+				send_data.order_amount = send_data.order_amount + results[0][i].price
 			}
 
 			//Set the users primary shipping address
 			send_data.primary_address = {
-				address_1 : info[0].address_1,
-				address_2 : info[0].address_2,
-				city : info[0].city,
-				state : info[0].state,
-				country : info[0].country,
-				zip_code : info[0].zip_code
+				address_1 : results[1][0].address_1,
+				address_2 : results[1][0].address_2,
+				city : results[1][0].city,
+				state : results[1][0].state,
+				country : results[1][0].country,
+				zip_code : results[1][0].zip_code
 			}
 
 			//Set the user primary credit card information
 			send_data.primary_credit_card = {
-				number : info[0].cc_number.substring(12),
-				type : info[0].cc_type 
+				number : results[1][0].cc_number.substring(12),
+				type : results[1][0].cc_type 
 			}
-
 			res.send(send_data);
-		}
-	});
+		});
 };
 
 var place_order_item = function(req, res, next)
