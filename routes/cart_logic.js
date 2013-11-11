@@ -73,7 +73,7 @@ var bucket_checkout  = function(req, res, next)
 						name : info[i].item_name,
 						description : info[i].item_description,
 						image : info[i].item_image,
-						price : info[i].price_buy
+						price : info[i].price
 					});
 				send_data.order_amount = send_data.order_amount + info[i].price_buy
 			}

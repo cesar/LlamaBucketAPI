@@ -19,7 +19,93 @@ var get_filtered_results = function(req, res, next)
 
 	
 
-	var category_query = 'and category_name =' + connection.escape(req.body.category_name);
+
+	var type_query = 'and is_auction =' + connection.escape(req.body.item_type);
+	var sort_by_query;
+
+	if(req.body.sort_by == '')
+	{
+
+
+		sort_by_query = "";
+	}
+
+	else{
+
+
+		sort_by_query = "order by " + req.body.sort_by;
+	}
+	if(req.body.item_type == "all" || req.body.item_type == '')
+	{
+
+
+		type_query = "";
+
+
+	}
+	var price_min_query;
+	var price_max_query;
+
+
+	if(typeof(parseInt(req.body.min_price)) == 'number' &&  req.body.min_price != '')
+	{
+		price_min_query = 'and price >' + req.body.min_price;
+	}
+
+	else if(req.body.min_price == '')
+	{
+
+		price_min_query = 'and price > 0';
+	}
+
+	else
+	{
+
+
+		price_min_query = "";
+	}
+
+	if( typeof(parseInt(req.body.max_price)) == 'number' &&  req.body.max_price != '')
+	{
+				price_max_query = ' and price <' + req.body.max_price;
+
+	}
+
+	else{
+
+
+		price_max_query = "";
+	}
+
+
+	var price_filter_query = price_min_query + price_max_query;
+
+
+	var search_param = '%' + req.body.search +'%';
+
+
+	console.log(price_filter_query);
+	var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category = cat_id and item_name like '+ connection.escape(search_param)+ type_query + price_filter_query+') as T ON B.listing_id = T.listing_id group by T.listing_id ' + sort_by_query; 
+	console.log(query);
+	connection.query(query, function(err, rows)
+	{
+
+
+		res.send({content: rows});
+		console.log({content: rows});
+	});
+
+}
+
+var get_filtered_category_results = function(req, res, next)
+{
+
+
+
+console.log(req.body);
+
+	
+
 
 	var type_query = 'and is_auction =' + connection.escape(req.body.item_type);
 	var sort_by_query;
@@ -86,7 +172,7 @@ var get_filtered_results = function(req, res, next)
 
 
 	console.log(price_filter_query);
-	var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category = cat_id and item_name like '+ connection.escape(search_param)+ type_query + price_filter_query+') as T ON B.listing_id = T.listing_id group by T.listing_id ' + sort_by_query; 
+	var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category ='+connection.escape(req.body.cat_id) + type_query + price_filter_query+') as T ON B.listing_id = T.listing_id group by T.listing_id ' + sort_by_query; 
 	console.log(query);
 	connection.query(query, function(err, rows)
 	{
@@ -97,7 +183,6 @@ var get_filtered_results = function(req, res, next)
 	});
 
 }
-
 
 var get_results = function(req, res, next)
 {
@@ -150,6 +235,7 @@ var get_results = function(req, res, next)
 
 exports.get_results = get_results;
 exports.get_filtered_results = get_filtered_results;
+exports.get_filtered_category_results = get_filtered_category_results;
 
 
 
