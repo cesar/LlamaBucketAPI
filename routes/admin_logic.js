@@ -14,18 +14,42 @@ var connection = mysql.createConnection({
  */
 var get_users = function(req, res, next){
 	var datetime = new Date();
+	var thisYear = datetime.getFullYear();
+	console.log("HEllo");
+
 	connection.query('SELECT client_id, client_firstname, client_lastname, email, isAdmin FROM client', function(err, rows){
+		if (!err)
+		{
+
 		console.log("Getting users from db...");
+
 		res.send(rows);
-		console.log(rows);
+		console.log(rows);			
+		}
+		//User email does not exist on our records as typed.
+		else{
+			console.log(err);
+			res.send({error : 'Not Found'});
+		}
+
 	});
 }
 var get_individual = function(req, res, next){
 	var datetime = new Date();
 	connection.query('SELECT client_id, client_firstname, client_lastname, email, phone, isAdmin, address_1, address_2, city, country, state, zip_code  FROM client natural join address WHERE address.is_primary = 1 and client.client_id=' + parseInt(req.params.parameter), function(err, rows){
-		console.log("Getting user from db...");
-		res.send(rows);
-		console.log(rows);
+		
+		if(!err)
+		{
+				console.log("Getting user from db...");
+				res.send(rows);
+				console.log(rows);
+	}
+
+	else
+	{
+		console.log(err);
+		res.send({error: 'Not Found'});
+	}
 	});
 }
 
@@ -34,6 +58,7 @@ var get_individual = function(req, res, next){
  */
 var get_report_total_sales_day = function(req, res, next){
 	var datetime = new Date();
+	console.log("Hello");
 	var thisYear = datetime.getFullYear();
 	var thisDay = datetime.getDate();
 	var thisMonth = datetime.getMonth() + 1;
@@ -44,9 +69,19 @@ var get_report_total_sales_day = function(req, res, next){
 		' from invoice natural join listing natural join client natural join credit_card natural join address natural join item natural join (select concat(client.client_firstname, " ", client_lastname) as "Buyer_Name", invoice.buyer_id as "Buyer_ID", invoice.invoice_id as "inv_id" from invoice natural join client where client.client_id = invoice.buyer_id) as T ' +
 		' where date_month = ' + thisMonth + ' and date_year= ' + thisYear + ' and date_day = ' + thisDay + ' and invoice.seller_id = credit_card.client_id  and credit_card.is_primary = 1 and invoice.seller_id = client.client_id and T.Buyer_ID = invoice.buyer_id and T.inv_id = invoice.invoice_id', 
 		function(err, rows){
-		console.log("Getting invoices from DB...");
-		res.send(rows);
-		console.log(rows);
+			if(!err){
+
+				console.log("Getting invoices from DB...");
+				res.send(rows);
+				console.log(rows);
+			}
+
+			else
+			{
+
+				console.log(err);
+				res.send({error: 'Not Found'});
+			}
 	});
 }
 var get_report_total_sales_week = function(req, res, next){
@@ -74,9 +109,19 @@ var get_report_total_sales_month = function(req, res, next){
 		' from invoice natural join listing natural join client natural join credit_card natural join address natural join item natural join (select concat(client.client_firstname, " ", client_lastname) as "Buyer_Name", invoice.buyer_id as "Buyer_ID", invoice.invoice_id as "inv_id" from invoice natural join client where client.client_id = invoice.buyer_id) as T ' +
 		' where date_month = ' + month + ' and date_year= ' + thisYear + ' and invoice.seller_id = credit_card.client_id  and credit_card.is_primary = 1 and invoice.seller_id = client.client_id and T.Buyer_ID = invoice.buyer_id and T.inv_id = invoice.invoice_id', 
 		function(err, rows){
-			console.log("Getting invoices from DB...");
-			res.send(rows);
-			console.log(rows);
+			if(!err){
+
+				console.log("Getting invoices from DB...");
+				res.send(rows);
+				console.log(rows);
+			}
+
+			else
+			{
+
+				console.log(err);
+				res.send({error: 'Not Found'});
+			}
 	});
 }
 var get_report_total_sales_day_by_product = function(req, res, next){
@@ -92,9 +137,19 @@ var get_report_total_sales_day_by_product = function(req, res, next){
 		' from invoice natural join listing natural join client natural join credit_card natural join address natural join item natural join (select concat(client.client_firstname, " ", client_lastname) as "Buyer_Name", invoice.buyer_id as "Buyer_ID", invoice.invoice_id as "inv_id" from invoice natural join client where client.client_id = invoice.buyer_id) as T ' +
 		' where date_month = ' + thisMonth + ' and date_year= ' + thisYear + ' and date_day = ' + thisDay + ' and invoice.seller_id = credit_card.client_id  and credit_card.is_primary = 1 and invoice.seller_id = client.client_id and T.Buyer_ID = invoice.buyer_id and T.inv_id = invoice.invoice_id', 
 		function(err, rows){
-		console.log("Getting invoices from DB...");
-		res.send(rows);
-		console.log(rows);
+		if(!err){
+
+				console.log("Getting invoices from DB...");
+				res.send(rows);
+				console.log(rows);
+			}
+
+			else
+			{
+
+				console.log(err);
+				res.send({error: 'Not Found'});
+			}
 	});
 }
 var get_report_total_sales_week_by_product = function(req, res, next){
@@ -109,9 +164,19 @@ var get_report_total_sales_week_by_product = function(req, res, next){
 		' from invoice natural join listing natural join client natural join credit_card natural join address natural join item natural join (select concat(client.client_firstname, " ", client_lastname) as "Buyer_Name", invoice.buyer_id as "Buyer_ID", invoice.invoice_id as "inv_id" from invoice natural join client where client.client_id = invoice.buyer_id) as T ' +
 		' where date_month = ' + thisMonth + ' and date_year= ' + thisYear + ' and date_week = ' + week + ' and invoice.seller_id = credit_card.client_id  and credit_card.is_primary = 1 and invoice.seller_id = client.client_id and T.Buyer_ID = invoice.buyer_id and T.inv_id = invoice.invoice_id', 
 		function(err, rows){
-		console.log("Getting invoices from DB...");
-		res.send(rows);
-		console.log(rows);
+		if(!err){
+
+				console.log("Getting invoices from DB...");
+				res.send(rows);
+				console.log(rows);
+			}
+
+			else
+			{
+
+				console.log(err);
+				res.send({error: 'Not Found'});
+			}
 	});
 }
 var get_report_total_sales_month_by_product = function(req, res, next){
@@ -124,9 +189,19 @@ var get_report_total_sales_month_by_product = function(req, res, next){
 		' from invoice natural join listing natural join client natural join credit_card natural join address natural join item natural join (select concat(client.client_firstname, " ", client_lastname) as "Buyer_Name", invoice.buyer_id as "Buyer_ID", invoice.invoice_id as "inv_id" from invoice natural join client where client.client_id = invoice.buyer_id) as T ' +
 		' where date_month = ' + month + ' and date_year= ' + thisYear + ' and invoice.seller_id = credit_card.client_id  and credit_card.is_primary = 1 and invoice.seller_id = client.client_id and T.Buyer_ID = invoice.buyer_id and T.inv_id = invoice.invoice_id', 
 		function(err, rows){
-			console.log("Getting invoices from DB...");
-			res.send(rows);
-			console.log(rows);
+			if(!err){
+
+				console.log("Getting invoices from DB...");
+				res.send(rows);
+				console.log(rows);
+			}
+
+			else
+			{
+
+				console.log(err);
+				res.send({error: 'Not Found'});
+			}
 	});
 }
 
