@@ -115,6 +115,10 @@ app.get('/users/:parameter', admin.get_individual);
 app.get('/reportday', admin.get_report_total_sales_day);
 app.get('/reportweek', admin.get_report_total_sales_week);
 app.get('/reportmonth', admin.get_report_total_sales_month);
+app.get('/reportday/:parameter', admin.get_report_total_sales_day_by_product);
+app.get('/reportweek/:parameter', admin.get_report_total_sales_week_by_product);
+app.get('/reportmonth/:parameter', admin.get_report_total_sales_month_by_product);
+
 
 
 /*
