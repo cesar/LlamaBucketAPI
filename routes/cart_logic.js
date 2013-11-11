@@ -1,14 +1,7 @@
-var mysql = require('mysql');
-var async = require('async');
-
-var connection = mysql.createConnection({
-  host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
-  user : process.env.CLEARDB_DATABASE_USERNAME, //Username
-  password : process.env.CLEARDB_DATABASE_PASSWORD,  //Password
-  database : process.env.CLEARDB_DATABASE,  //database name
-});
+var database = require('./database.js');
 
 
+var connection = database.connect_db();
 
 var get_address = function(req,res, err)
 {
@@ -22,6 +15,7 @@ var get_cart = function(req, res, err)
 {
 	var query = 'select * from item natural join (select item_id, price, listing_id from listing where is_active = 1 and is_auction = "buy" or is_auction = "both") as t1 natural join (select listing_id, client_id from bucket where client_id = '
 		+connection.escape(req.params.id)+') as t2';
+
 	connection.query(query, function(err, items)
 	{
 		if (!err)
@@ -44,6 +38,19 @@ var get_cart = function(req, res, err)
 		else
 			throw err
 	});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 /**
 *	GET items from the bucket to process the checkout
@@ -100,6 +107,19 @@ var bucket_checkout  = function(req, res, next)
 		else
 			throw err;
 	});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 
 /**
@@ -182,6 +202,20 @@ var item_checkout  = function(req, res, next)
 				throw err;
 			}
 		});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
+
 }
 var add_to_cart = function(req, res, next)
 {
@@ -286,6 +320,19 @@ var place_order_bucket = function(req, res, next)
 			}
 			res.send(send_data);
 		});
+
+		connection.on('error', function(err)
+	  {
+	    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+	    {
+	      console.log('reconnected');
+	      connection =  database.connect_db();
+	    }
+	    else
+	    {
+	      throw err;
+	    }
+	  });
 };
 
 var place_order_item = function(req, res, next)
@@ -359,6 +406,18 @@ var place_order_item = function(req, res, next)
 				};
 				res.send(send_data);
 		});	
+		connection.on('error', function(err)
+	  {
+	    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+	    {
+	      console.log('reconnected');
+	      connection =  database.connect_db();
+	    }
+	    else
+	    {
+	      throw err;
+	    }
+	  });
 };
 
 exports.place_order_bucket = place_order_bucket;

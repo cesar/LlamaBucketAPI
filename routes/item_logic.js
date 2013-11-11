@@ -1,16 +1,7 @@
-var mysql = require('mysql');
-
-var connection = mysql.createConnection({
-  host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
-  user : process.env.CLEARDB_DATABASE_USERNAME, //Username
-  password : process.env.CLEARDB_DATABASE_PASSWORD,  //Password
-  database : process.env.CLEARDB_DATABASE,  //database name
-});
+var database = require('./database.js');
 
 
-
-
-
+var connection = database.connect_db();
 
 var get_item = function(req, res, next){
 	
@@ -20,7 +11,18 @@ var get_item = function(req, res, next){
 				res.send(rows[0]);
 		});
 
-
+    connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 
 exports.get_item = get_item;
