@@ -44,7 +44,6 @@ var sign_in = function(req, res, next)
 		}
 	});
 
-	connection.end();
 }
 
 //Get the user profile
@@ -82,7 +81,6 @@ var get_profile = function(req, res, next)
 			throw err;
 	});
 
-	connection.end();
 }
 
 /**
@@ -109,7 +107,6 @@ var user_addresses = function(req, res, next)
 			res.send('Error');
 	});
 
-	connection.end();
 }
 
 var get_credit_cards = function(req, res, next)
@@ -144,7 +141,6 @@ var get_credit_cards = function(req, res, next)
 			throw err;
 	});
 
-	connection.end();
 }
 
 var add_mail_address = function(req, res, next)
@@ -177,7 +173,20 @@ var delete_address = function(req, res, next)
 
 var get_notifications = function(req, res,err)
 {
+	//Get all notifications pertaining to a user.
+	var query ='select notification_id, notification_message, title from user_notifications where client_id = '+connection.escape(req.params.id)+' and is_read = 0;'
 
+	connection.query(query, function(err, notifications)
+	{
+		if(!err)
+		{
+			res.send(notifications);
+		}
+		else
+		{
+			throw err;
+		}
+	});
 }
 
 var get_bids = function(req, res, err)
@@ -194,7 +203,6 @@ var get_bids = function(req, res, err)
 			console.log(err);
 	});
 
-	connection.end();
 }
 
 var get_listings = function(req, res, err)
@@ -212,7 +220,6 @@ var get_listings = function(req, res, err)
 			}
 		});
 
-		connection.end();
 
 }
 
