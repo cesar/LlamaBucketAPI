@@ -45,8 +45,7 @@ var sign_in = function(req, res, next)
 		}
 	});
 
-	;
-}
+
 
 //Get the user profile
 var get_profile = function(req, res, next)
@@ -83,7 +82,10 @@ var get_profile = function(req, res, next)
 			throw err;
 	});
 
+<<<<<<< HEAD
 	;
+=======
+>>>>>>> 59ba3d6e026a0f15adedb9f3096cd8bf80dc5817
 }
 
 /**
@@ -110,7 +112,6 @@ var user_addresses = function(req, res, next)
 			res.send('Error');
 	});
 
-	;
 }
 
 var get_credit_cards = function(req, res, next)
@@ -145,7 +146,7 @@ var get_credit_cards = function(req, res, next)
 			throw err;
 	});
 
-	;
+
 }
 
 var add_mail_address = function(req, res, next)
@@ -178,7 +179,20 @@ var delete_address = function(req, res, next)
 
 var get_notifications = function(req, res,err)
 {
+	//Get all notifications pertaining to a user.
+	var query ='select notification_id, notification_message, title from user_notifications where client_id = '+connection.escape(req.params.id)+' and is_read = 0;'
 
+	connection.query(query, function(err, notifications)
+	{
+		if(!err)
+		{
+			res.send(notifications);
+		}
+		else
+		{
+			throw err;
+		}
+	});
 }
 
 var get_bids = function(req, res, err)
@@ -215,7 +229,7 @@ var get_listings = function(req, res, err)
 			}
 		});
 
-		
+
 
 }
 
