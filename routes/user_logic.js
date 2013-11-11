@@ -174,7 +174,7 @@ var delete_address = function(req, res, next)
 var get_notifications = function(req, res,err)
 {
 	//Get all notifications pertaining to a user.
-	var query ='select notification_id, notification_message, title from user_notifications where client_id = '+connection.escape(req.params.id)+' and is_read = 0;'
+	var query ='select notification_id, notification_message, title, listing_id from user_notifications where client_id = '+connection.escape(req.params.id)+' and is_read = 0;'
 
 	connection.query(query, function(err, notifications)
 	{
