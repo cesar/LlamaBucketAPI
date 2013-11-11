@@ -11,7 +11,13 @@ var connection = mysql.createConnection({
   database : process.env.CLEARDB_DATABASE,  //database name
 });
 
+var get_filtered_results = function(req, res, next)
+{
+	console.log(req);
 
+
+
+}
 
 
 var get_results = function(req, res, next)
@@ -64,6 +70,7 @@ var get_results = function(req, res, next)
 //Export functions
 
 exports.get_results = get_results;
+exports.get_filtered_results = get_filtered_results;
 
 
 

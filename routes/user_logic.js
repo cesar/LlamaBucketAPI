@@ -29,7 +29,8 @@ var sign_in = function(req, res, next)
 			if(user[0].password == req.body.password)
 			{
 				var send_data = {
-					id : user[0].client_id
+					id : user[0].client_id,
+					isAdmin: user[0].isAdmin
 				}
 				res.send(send_data);
 			}
@@ -221,6 +222,7 @@ exports.add_mail_address = add_mail_address;
 exports.delete_address = delete_address;
 exports.get_profile = get_profile;
 exports.get_credit_cards = get_credit_cards;
+
 
 
 

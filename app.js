@@ -44,8 +44,10 @@ app.use(express.session());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+
 // development only
 if ('development' == app.get('env')) {
+  console.log("Hello");
   app.use(express.errorHandler());
 }
 
@@ -70,6 +72,8 @@ app.get('/categories/:parent_id', category.get_subcategories);
 app.get('/item', item.get_item);
 app.get('/item/:parameter', item.get_item);
 app.get('/invoice', invoice.get_invoice);
+app.get('/order/bucket/:parameter', cart.place_order_bucket);
+app.get('/order/item/:parameter', cart.place_order_item);
 
 app.get('/cart/:id', cart.get_cart);
 app.get('/checkout/bucket/:id', cart.bucket_checkout);
@@ -79,6 +83,9 @@ app.post('/add_cart', cart.add_to_cart);
 app.post('/remove_from_cart', cart.remove);
 app.get('/checkout_address', cart.get_address);
 app.get('/search/:parameter', search.get_results);
+app.get('/filter_results', search.get_filtered_results);
+
+
 
 
 /*
@@ -98,6 +105,7 @@ app.get('/get_notifications', user.get_notifications);
 app.get('/get_bids/:client_id', user.get_bids);
 app.get('/get_listings/:client_id', user.get_listings);
 
+
 /*
 * =============================
 *              Admin           |
@@ -106,9 +114,9 @@ app.get('/get_listings/:client_id', user.get_listings);
 
 app.get('/users', admin.get_users);
 app.get('/users/:parameter', admin.get_individual);
-app.get('/report/day/:day', admin.get_report_total_sales_day);
-app.get('/report/week/:week', admin.get_report_total_sales_week);
-app.get('/report/month/:month', admin.get_report_total_sales_month);
+app.get('/reportday', admin.get_report_total_sales_day);
+app.get('/reportweek', admin.get_report_total_sales_week);
+app.get('/reportmonth', admin.get_report_total_sales_month);
 
 
 /*

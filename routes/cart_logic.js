@@ -20,7 +20,7 @@ var get_address = function(req,res, err)
 */
 var get_cart = function(req, res, err)
 {
-	var query = 'select * from item natural join (select item_id, price_buy, listing_id from listing where is_active = 1 and is_auction = "buy" or is_auction = "both") as t1 natural join (select listing_id, client_id from bucket where client_id = '
+	var query = 'select * from item natural join (select item_id, price, listing_id from listing where is_active = 1 and is_auction = "buy" or is_auction = "both") as t1 natural join (select listing_id, client_id from bucket where client_id = '
 		+connection.escape(req.params.id)+') as t2';
 	connection.query(query, function(err, items)
 	{
@@ -31,7 +31,7 @@ var get_cart = function(req, res, err)
 
 			for(var i = 0; i < items.length; i++)
 			{
-				total_price = total_price + items[i].price_buy;
+				total_price = total_price + items[i].price;
 			}
 
 			var send_data = {
@@ -51,7 +51,7 @@ var get_cart = function(req, res, err)
 */
 var bucket_checkout  = function(req, res, next)
 {
-	var query = 'select * from item natural join (select item_id, listing_id, price_buy from listing where is_active = 1) as t1 natural join (select listing_id, client_id from bucket where client_id = '
+	var query = 'select * from item natural join (select item_id, listing_id, price from listing where is_active = 1) as t1 natural join (select listing_id, client_id from bucket where client_id = '
 		+connection.escape(req.params.id)+') as t2 natural join (select client_id, address_1, address_2, city, state, country, zip_code from address where is_primary = 1) as t3 natural join (select client_id, cc_number, cc_type, billing_address from credit_card where is_primary = 1) as t4;'
 	
 	connection.query(query, function(err, info)
@@ -65,17 +65,18 @@ var bucket_checkout  = function(req, res, next)
 				order_amount : 0,
 			}
 
-			//Get all the infor from the items in the bucket
+			//Get all the info from the items in the bucket
 			for(var i = 0; i < info.length; i++)
 			{
 				send_data.items.push(
 					{
+						id : info[i].item_id,
 						name : info[i].item_name,
 						description : info[i].item_description,
 						image : info[i].item_image,
-						price : info[i].price_buy
+						price : info[i].price
 					});
-				send_data.order_amount = send_data.order_amount + info[i].price_buy
+				send_data.order_amount = send_data.order_amount + info[i].price
 			}
 
 			//Set the users primary shipping address
@@ -95,8 +96,6 @@ var bucket_checkout  = function(req, res, next)
 			}
 
 			res.send(send_data);
-
-
 		}
 		else
 			throw err;
@@ -119,7 +118,7 @@ var item_checkout  = function(req, res, next)
 	var query_1 = 'select address_1, address_2, city, zip_code, state, country, cc_number, cc_type from address natural join credit_card where client_id = '
 	+client_id+' and is_primary = 1';
 
-	var query_2 = 'select item_name, item_image, item_description, price_buy from item natural join listing where item_id = '+ item_id;
+	var query_2 = 'select item_id, item_name, item_image, item_description, price from item natural join listing where item_id = '+ item_id;
 	;
 
 	async.parallel([
@@ -169,10 +168,11 @@ var item_checkout  = function(req, res, next)
 						country : results[0][0].country
 					},
 					item : {
+						id : results[1][0].item_id,
 						name : results[1][0].item_name,
 						image : results[1][0].item_image,
 						description : results[1][0].item_description,
-						price : results[1][0].price_buy
+						price : results[1][0].price
 					}
 				};
 				res.send(send_data);
@@ -201,9 +201,140 @@ var remove = function(req, res, next)
 	}
 	res.send(200);
 }
+
+var place_order_bucket = function(req, res, next)
+{
+	var today = new Date();
+
+	var query = 'select * from item natural join (select item_id, listing_id, price from listing where is_active = 1) as t1 natural join (select listing_id, client_id from bucket where client_id = '
+		+connection.escape(req.params.parameter)+') as t2 natural join (select client_id, address_1, address_2, city, state, country, zip_code from address where is_primary = 1) as t3 natural join (select client_id, cc_number, cc_type, billing_address from credit_card where is_primary = 1) as t4;'
+	
+	connection.query(query, function(err, info)
+	{
+		if (!err)
+		{
+			var send_data = {
+				items : [],
+				primary_address : {},
+				primary_credit_card : {},
+				order_amount : 0,
+				time : today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear(),
+			}
+
+			//Get all the info from the items in the bucket
+			for(var i = 0; i < info.length; i++)
+			{
+				send_data.items.push(
+					{
+						id : info[i].item_id,
+						name : info[i].item_name,
+						description : info[i].item_description,
+						image : info[i].item_image,
+						price : info[i].price
+					});
+				send_data.order_amount = send_data.order_amount + info[i].price
+			}
+
+			//Set the users primary shipping address
+			send_data.primary_address = {
+				address_1 : info[0].address_1,
+				address_2 : info[0].address_2,
+				city : info[0].city,
+				state : info[0].state,
+				country : info[0].country,
+				zip_code : info[0].zip_code
+			}
+
+			//Set the user primary credit card information
+			send_data.primary_credit_card = {
+				number : info[0].cc_number.substring(12),
+				type : info[0].cc_type 
+			}
+
+			res.send(send_data);
+		}
+	});
+};
+
+var place_order_item = function(req, res, next)
+{
+	var parameters = req.params.parameter.split('-');
+
+	//Parameter 0 is the item id
+	var query_1 = 'select * from item natural join (select seller_id as client_id, item_id, price, src_address from listing) as t1 natural join (select client_firstname, client_lastname, client_id from client) as t2 where item_id = '
+	+connection.escape(parameters[0]);
+
+	//Patameter 1 is the client id
+	var query_2 = 'select address_1, address_2, city, zip_code, state, country, cc_number, cc_type from address natural join credit_card where client_id = '
+	+connection.escape(parameters[1])+' and is_primary = 1';
+
+	async.parallel([
+		function(callback)
+		{
+			connection.query(query_1, function(err, item)
+			{
+				if(!err)
+				{
+					callback(null, item);
+				}
+				else
+				{
+					callback(err, null);
+				}
+			});
+		},
+		function(callback)
+		{
+			connection.query(query_2, function(err, info)
+			{
+				if (!err)
+				{
+					callback(null, info);
+				}
+				else
+				{
+					callback(err, null);
+				}
+			});
+		}],
+		function(err, results)
+		{
+
+			var today = new Date();
+
+			var send_data = {
+					primary_credit_card  : {
+						number : results[1][0].cc_number.substring(12),
+						type : results[1][0].cc_type
+					},
+					primary_address : {
+						address_1 : results[1][0].address_1,
+						address_2 : results[1][0].address_2,
+						city : results[1][0].city,
+						state : results[1][0].state,
+						zip_code : results[1][0].zip_code,
+						country : results[1][0].country
+					},
+					item : {
+						id : results[0][0].item_id,
+						name : results[0][0].item_name,
+						image : results[0][0].item_image,
+						description : results[0][0].item_description,
+						price : results[0][0].price,
+						seller : results[0][0].client_firstname + ' ' +results[0][0].client_lastname
+					},
+					time : today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear()
+				};
+				res.send(send_data);
+		});	
+};
+
+exports.place_order_bucket = place_order_bucket;
+exports.place_order_item = place_order_item;
 exports.get_cart = get_cart;
 exports.bucket_checkout = bucket_checkout;
 exports.item_checkout = item_checkout;
 exports.get_address = get_address;
 exports.add_to_cart = add_to_cart;
 exports.remove = remove;
+
