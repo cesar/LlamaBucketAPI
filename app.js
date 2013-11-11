@@ -81,7 +81,7 @@ app.post('/add_cart', cart.add_to_cart);
 app.post('/remove_from_cart', cart.remove);
 app.get('/checkout_address', cart.get_address);
 app.get('/search/:parameter', search.get_results);
-app.get('/filter_results', search.get_filtered_results);
+app.post('/filter_results', search.get_filtered_results);
 
 
 
