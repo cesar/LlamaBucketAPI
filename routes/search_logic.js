@@ -12,6 +12,7 @@ var connection = mysql.createConnection({
 });
 
 
+
 var get_filtered_results = function(req, res, next)
 {
 	console.log(req.body);
@@ -21,7 +22,20 @@ var get_filtered_results = function(req, res, next)
 	var category_query = 'and category_name =' + connection.escape(req.body.category_name);
 
 	var type_query = 'and is_auction =' + connection.escape(req.body.item_type);
+	var sort_by_query;
 
+	if(req.body.sort_by == '')
+	{
+
+
+		sort_by_query = "";
+	}
+
+	else{
+
+
+		sort_by_query = "order by " + req.body.sort_by;
+	}
 	if(req.body.item_type == "all")
 	{
 
@@ -72,7 +86,7 @@ var get_filtered_results = function(req, res, next)
 
 
 	console.log(price_filter_query);
-	var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category = cat_id and item_name like '+ connection.escape(search_param)+ type_query + price_filter_query+') as T ON B.listing_id = T.listing_id group by T.listing_id ORDER BY item_name'
+	var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category = cat_id and item_name like '+ connection.escape(search_param)+ type_query + price_filter_query+') as T ON B.listing_id = T.listing_id group by T.listing_id ' + sort_by_query; 
 	console.log(query);
 	connection.query(query, function(err, rows)
 	{
