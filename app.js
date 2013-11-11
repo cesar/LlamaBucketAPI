@@ -72,6 +72,8 @@ app.get('/categories/:parent_id', category.get_subcategories);
 app.get('/item', item.get_item);
 app.get('/item/:parameter', item.get_item);
 app.get('/invoice', invoice.get_invoice);
+app.get('/order/bucket/:parameter', cart.place_order_bucket);
+app.get('/order/item/:parameter', cart.place_order_item);
 
 app.get('/cart/:id', cart.get_cart);
 app.get('/checkout/bucket/:id', cart.bucket_checkout);
