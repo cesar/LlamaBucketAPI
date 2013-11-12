@@ -1,3 +1,5 @@
+var async = require('async');
+
 var database = require('./database.js');
 
 
