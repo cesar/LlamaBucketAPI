@@ -4,14 +4,10 @@
 * ============================================
 */
 
-var mysql = require('mysql');
+var database = require('./database.js');
 
-var connection = mysql.createConnection({
-  host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
-  user : process.env.CLEARDB_DATABASE_USERNAME, //Username
-  password : process.env.CLEARDB_DATABASE_PASSWORD,  //Password
-  database : process.env.CLEARDB_DATABASE,  //database name
-});
+
+var connection = database.connect_db();
 
 
 // User notifications
@@ -43,6 +39,19 @@ var sign_in = function(req, res, next)
 			res.send({error : 'Not Found'});
 		}
 	});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 
 }
 
@@ -81,6 +90,19 @@ var get_profile = function(req, res, next)
 			throw err;
 	});
 
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
+
 }
 
 /**
@@ -106,6 +128,19 @@ var user_addresses = function(req, res, next)
 		else
 			res.send('Error');
 	});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 
 }
 
@@ -140,6 +175,19 @@ var get_credit_cards = function(req, res, next)
 		else
 			throw err;
 	});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 
 }
 
@@ -187,6 +235,19 @@ var get_notifications = function(req, res,err)
 			throw err;
 		}
 	});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 
 var get_bids = function(req, res, err)
@@ -203,6 +264,18 @@ var get_bids = function(req, res, err)
 			console.log(err);
 	});
 
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 
 var get_listings = function(req, res, err)
@@ -219,6 +292,19 @@ var get_listings = function(req, res, err)
 				console.log(err);
 			}
 		});
+
+		connection.on('error', function(err)
+	  {
+	    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+	    {
+	      console.log('reconnected');
+	      connection =  database.connect_db();
+	    }
+	    else
+	    {
+	      throw err;
+	    }
+	  });
 
 
 }

@@ -2,14 +2,10 @@
 *	All logic related to searching for items on the database.
 */
 
-var mysql = require('mysql');
+var database = require('./database.js');
 
-var connection = mysql.createConnection({
-  host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
-  user : process.env.CLEARDB_DATABASE_USERNAME, //Username
-  password : process.env.CLEARDB_DATABASE_PASSWORD,  //Password
-  database : process.env.CLEARDB_DATABASE,  //database name
-});
+
+var connection = database.connect_db();
 
 
 
@@ -26,8 +22,6 @@ var get_filtered_results = function(req, res, next)
 
 	if(req.body.sort_by == '')
 	{
-
-
 		sort_by_query = "";
 	}
 
@@ -96,6 +90,19 @@ var get_filtered_results = function(req, res, next)
 		console.log({content: rows});
 	});
 
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
+
 }
 
 
@@ -141,7 +148,18 @@ var get_results = function(req, res, next)
 				console.log(err);
 		});
 	}
-	
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 
 
