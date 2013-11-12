@@ -148,6 +148,8 @@ app.get('/get_addresses/:id', user.user_addresses);
 app.get('/get_credit_cards/:id', user.get_credit_cards);
 app.post('/add_mail_address', user.add_mail_address);
 app.post('/delete_address', user.delete_address);
+app.get('/userinvoice/:parameter', user.get_invoices);
+app.get('/singleinvoice/:parameter', user.get_single_invoice);
 app.get('/get_notifications/:id', user.get_notifications);
 app.get('/get_bids/:client_id', user.get_bids);
 app.get('/get_listings/:client_id', user.get_listings);
