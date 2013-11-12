@@ -151,6 +151,7 @@ app.post('/delete_address', user.delete_address);
 app.get('/get_notifications/:id', user.get_notifications);
 app.get('/get_bids/:client_id', user.get_bids);
 app.get('/get_listings/:client_id', user.get_listings);
+app.post('/get_offers', user.get_offers);
 
 
 /*

@@ -1,14 +1,7 @@
-var mysql = require('mysql');
-
-var connection = mysql.createConnection({
-	host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
-  	user : process.env.CLEARDB_DATABASE_USERNAME, //Username
-  	password : process.env.CLEARDB_DATABASE_PASSWORD,  //Password
-  	database : process.env.CLEARDB_DATABASE,  //database name
-});
+var database = require('./database.js');
 
 
-
+var connection = database.connect_db();
 /*
  * Basic method to get the users from the database
  */
@@ -33,6 +26,19 @@ var get_users = function(req, res, next){
 		}
 
 	});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 var get_individual = function(req, res, next){
 	var datetime = new Date();
@@ -51,6 +57,19 @@ var get_individual = function(req, res, next){
 		res.send({error: 'Not Found'});
 	}
 	});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 
 /*
@@ -83,6 +102,19 @@ var get_report_total_sales_day = function(req, res, next){
 				res.send({error: 'Not Found'});
 			}
 	});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 var get_report_total_sales_week = function(req, res, next){
 	var datetime = new Date();
@@ -99,6 +131,19 @@ var get_report_total_sales_week = function(req, res, next){
 		res.send(rows);
 		console.log(rows);
 	});
+	
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 var get_report_total_sales_month = function(req, res, next){
 	var datetime = new Date();
@@ -123,7 +168,20 @@ var get_report_total_sales_month = function(req, res, next){
 				res.send({error: 'Not Found'});
 			}
 	});
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
+
 var get_report_total_sales_day_by_product = function(req, res, next){
 	var datetime = new Date();
 	var thisYear = datetime.getFullYear();
@@ -151,6 +209,18 @@ var get_report_total_sales_day_by_product = function(req, res, next){
 				res.send({error: 'Not Found'});
 			}
 	});
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 var get_report_total_sales_week_by_product = function(req, res, next){
 	var datetime = new Date();
@@ -178,6 +248,18 @@ var get_report_total_sales_week_by_product = function(req, res, next){
 				res.send({error: 'Not Found'});
 			}
 	});
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 var get_report_total_sales_month_by_product = function(req, res, next){
 	var datetime = new Date();
@@ -203,6 +285,18 @@ var get_report_total_sales_month_by_product = function(req, res, next){
 				res.send({error: 'Not Found'});
 			}
 	});
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 
 

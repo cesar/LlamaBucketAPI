@@ -4,14 +4,10 @@
 * ============================================
 */
 
-var mysql = require('mysql');
+var database = require('./database.js');
 
-var connection = mysql.createConnection({
-  host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
-  user : process.env.CLEARDB_DATABASE_USERNAME, //Username
-  password : process.env.CLEARDB_DATABASE_PASSWORD,  //Password
-  database : process.env.CLEARDB_DATABASE,  //database name
-});
+
+var connection = database.connect_db();
 
 
 // User notifications
@@ -46,6 +42,20 @@ var sign_in = function(req, res, next)
 	});
 
 
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
+
+}
 
 //Get the user profile
 var get_profile = function(req, res, next)
@@ -82,10 +92,21 @@ var get_profile = function(req, res, next)
 			throw err;
 	});
 
-<<<<<<< HEAD
-	;
-=======
->>>>>>> 59ba3d6e026a0f15adedb9f3096cd8bf80dc5817
+	
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
+
 }
 
 /**
@@ -104,13 +125,26 @@ var update_user = function(req, res, next)
 *	Get the addresses for a specific user
 */
 var user_addresses = function(req, res, next)
-{	;
+{	
 	connection.query('select * from address where client_id = '+connection.escape(req.param('id')), function(err, rows){
 		if(!err)
 			res.send({ content : rows});
 		else
 			res.send('Error');
 	});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 
 }
 
@@ -146,6 +180,18 @@ var get_credit_cards = function(req, res, next)
 			throw err;
 	});
 
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 
 }
 
@@ -180,7 +226,7 @@ var delete_address = function(req, res, next)
 var get_notifications = function(req, res,err)
 {
 	//Get all notifications pertaining to a user.
-	var query ='select notification_id, notification_message, title from user_notifications where client_id = '+connection.escape(req.params.id)+' and is_read = 0;'
+	var query ='select notification_id, notification_message, title, listing_id from user_notifications where client_id = '+connection.escape(req.params.id)+' and is_read = 0;'
 
 	connection.query(query, function(err, notifications)
 	{
@@ -193,6 +239,19 @@ var get_notifications = function(req, res,err)
 			throw err;
 		}
 	});
+
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 
 var get_bids = function(req, res, err)
@@ -209,13 +268,24 @@ var get_bids = function(req, res, err)
 			console.log(err);
 	});
 
-
+	connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 
 var get_listings = function(req, res, err)
 {		var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item where seller_id ='+ connection.escape(req.param('client_id'))+') as T ON B.listing_id = T.listing_id group by T.listing_id';
 		
-		;
+		
 		connection.query( query,function(err, rows){
 
 			if(!err)
@@ -229,6 +299,59 @@ var get_listings = function(req, res, err)
 			}
 		});
 
+		connection.on('error', function(err)
+	  {
+	    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+	    {
+	      console.log('reconnected');
+	      connection =  database.connect_db();
+	    }
+	    else
+	    {
+	      throw err;
+	    }
+	  });
+
+
+
+}
+
+var get_offers = function(req, res, err)
+{
+
+
+	
+	var query =' select * from bidding_history natural join listing natural join item natural join client where seller_id =' + connection.escape(req.body.client_id) +' and client_id = bidder_id and item_id =' + connection.escape(req.body.item_id) + ' order by datetime desc'
+	console.log(query);
+	connection.query(query, function(err, offers)
+	{
+
+
+
+		if(!err)
+		{
+			res.send(offers);
+		}
+
+		else
+		{
+
+			console.log(err);
+		}
+	});
+
+		connection.on('error', function(err)
+	  {
+	    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+	    {
+	      console.log('reconnected');
+	      connection =  database.connect_db();
+	    }
+	    else
+	    {
+	      throw err;
+	    }
+	  });
 
 
 }
@@ -243,7 +366,7 @@ exports.add_mail_address = add_mail_address;
 exports.delete_address = delete_address;
 exports.get_profile = get_profile;
 exports.get_credit_cards = get_credit_cards;
-
+exports.get_offers = get_offers;
 
 
 

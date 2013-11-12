@@ -4,18 +4,10 @@
 * ============================================
 */
 
-
-var mysql = require('mysql');
-
-var connection = mysql.createConnection({
-  host : process.env.CLEARDB_DATABASE_URL,  //Set up the database connection host
-  user : process.env.CLEARDB_DATABASE_USERNAME, //Username
-  password : process.env.CLEARDB_DATABASE_PASSWORD,  //Password
-  database : process.env.CLEARDB_DATABASE,  //database name
-});
+var database = require('./database.js');
 
 
-
+var connection = database.connect_db();
 /*
 * Get all the categories from the database
 * Send them to the client
@@ -28,8 +20,21 @@ var get_categories = function(req, res, next)
     else
       console.log(err);
   });
-}
 
+  connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
+
+}
 
 /*
 * Get all subcategories from the database.
@@ -51,6 +56,19 @@ var get_subcategories = function(req, res, next)
       res.send(send_data);
     })
   });
+
+  connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 
 /*
@@ -66,6 +84,19 @@ var get_category = function(req, res,next)
     else
       console.log(err);
   });
+
+  connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
 }
 /*
 * =================================================================== Use transactions ?
@@ -80,8 +111,6 @@ var add_category = function(req, res, next)
   connection.query('insert into category (category_name, parent_id) values('+connection.escape(req.body.category)+', '+connection.escape(req.body.parent)+')', function(err, result){
     console.log(result);
   })
-
-  res.send(200);
 
 }
 
