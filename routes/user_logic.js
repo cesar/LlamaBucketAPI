@@ -223,6 +223,36 @@ var get_listings = function(req, res, err)
 
 }
 
+var get_invoices = function(req, res, err){
+	var query = 'select * from listing natural join invoice natural join item natural join client where seller_id = client.client_id and invoice.buyer_id = ' + req.params.parameter;
+	connection.query(query, function(err, rows){
+		if(!err)
+			{
+				res.send(rows);
+				console.log(rows);
+			}
+			else{
+
+				console.log(err);
+			}
+	});
+}
+
+var get_single_invoice = function(req, res, err){
+		var query = 'select final_price, item_name, cc_number, invoice_date as date, address_1, address_2, city, state, zip_code, concat(client_firstname, " ", client_lastname) as seller_name from listing natural join invoice natural join item natural join client natural join credit_card natural join address where seller_id = client.client_id and invoice_id = ' + req.params.parameter;
+		connection.query(query, function(err, rows){
+			if(!err)
+			{
+				res.send(rows);
+				console.log(rows);
+			}
+			else{
+
+				console.log(err);
+			}
+		});
+}
+
 exports.get_listings = get_listings;
 exports.get_bids = get_bids;
 exports.get_notifications = get_notifications;
@@ -233,6 +263,9 @@ exports.add_mail_address = add_mail_address;
 exports.delete_address = delete_address;
 exports.get_profile = get_profile;
 exports.get_credit_cards = get_credit_cards;
+exports.get_invoices = get_invoices;
+exports.get_single_invoice = get_single_invoice;
+
 
 
 
