@@ -412,17 +412,24 @@ var upload_item = function(req, res, err)
 		connection.escape(req.body.item_name) + ',' + connection.escape(serverURL + '/' + req.files.file.ws.path) + ',' 
 		+ connection.escape(req.body.item_description) + ','+ connection.escape(req.body.item_brand) + ',' 
 		+ connection.escape(req.body.item_year) + ',' + connection.escape(req.body.item_category) + ')';
-	console.log("INSERT ITEM QUERY: " + item_insert_query)
-
-	connection.query(item_insert_query, function(err, rows)
-		{	if(!err)
-			{	
-				var type_query;
-
-				var listing_query = 'INSERT INTO listing (price, start_bid, exp_date, seller_id, item_id, is_active,  is_auction, buyout_price, shipping_price, shipping_service, handle_time) VALUES(';
+console.log("INSERT ITEM QUERY: " + item_insert_query);
 
 
-				var item_id = rows.insertId;
+connection.beginTransaction(function(err) {
+	if (err) { console.log(err); }
+
+
+	connection.query(item_insert_query, function(err, result)
+	{	  
+		if(!err)
+		{	
+			var type_query;
+
+			var listing_query = 'INSERT INTO listing (price, start_bid, exp_date, seller_id, item_id, is_active,  is_auction, buyout_price, shipping_price, shipping_service, handle_time) VALUES(';
+
+
+				var item_id = result.insertId;
+				console.log("LOG - Item Inserted: " + item_id);
 
 				if(item_type == "bid")
 				{
@@ -447,10 +454,11 @@ var upload_item = function(req, res, err)
 
 
 				}
-				else if(item_type =="both"){
+				else if(item_type =="both")
+				{
 
 
-					type_query =  	connection.escape(parseFloat(req.body.start_bid)) + ','+
+					type_query =  connection.escape(parseFloat(req.body.start_bid)) + ','+
 					connection.escape(parseFloat(req.body.start_bid)) + ','+
 					connection.escape(dateFormat(exp_date, "isoDateTime")) + ',' + 
 					connection.escape(parseInt(req.body.user_id)) + ',' + 
@@ -469,6 +477,7 @@ var upload_item = function(req, res, err)
 
 
 console.log("UPLOAD LISTING QUERY: " + listing_query + type_query + shipping_info);
+
 connection.query(listing_query + type_query + shipping_info, function(error, rows)
 {
 	if(!error)
@@ -476,6 +485,16 @@ connection.query(listing_query + type_query + shipping_info, function(error, row
 
 		res.send({recent_item_id : item_id})
 		console.log(rows);
+
+
+		connection.commit(function(err) {
+			if (err) { 
+				connection.rollback(function() {
+					throw err;
+				});
+			}
+			console.log('Insert Listing Success!');
+		});
 	}
 
 	else{
@@ -486,28 +505,33 @@ connection.query(listing_query + type_query + shipping_info, function(error, row
 
 }
 
+
 else{
 
 	console.log(err);
 }
 
 });
+});
 
-	connection.on('error', function(err)
+
+connection.on('error', function(err)
+{
+	if(err.code == 'PROTOCOL_CONNECTION_LOST')
 	{
-		if(err.code == 'PROTOCOL_CONNECTION_LOST')
-		{
-			console.log('reconnected');
-			connection =  database.connect_db();
-		}
-		else
-		{
-			throw err;
-		}
-	});
-
-
+		console.log('reconnected');
+		connection =  database.connect_db();
+	}
+	else
+	{
+		throw err;
+	}
+});
 }
+
+
+
+
 
 
 exports.upload_item = upload_item;
