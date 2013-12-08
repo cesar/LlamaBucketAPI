@@ -148,9 +148,42 @@ var user_addresses = function(req, res, next)
 
 }
 
+var get_address = function(req, res, next)
+{
+  var query = "select * from address where address_id = " +connection.escape(req.params.id);
+  connection.query(query, function(err, rows)
+  {
+    console.log(rows);
+    res.send(rows[0]);
+  });
+}
+
+var get_creditcard = function (req, res, next)
+{
+  var query = "select * from credit_card natural join address where cc_id = " + connection.escape(req.params.id);
+  connection.query(query, function(err, rows)
+  {
+          send_data = {
+          id : rows[0].cc_id,
+          number : rows[0].cc_number.substring(12),
+          type : rows[0].cc_type,
+          address_1 : rows[0].address_1,
+          address_2 : rows[0].address_2,
+          city : rows[0].city,
+          state : rows[0].state,
+          zip_code : rows[0].zip_code,
+          exp_date : rows[0].cc_exp_date,
+          holder : rows[0].cc_holder,
+          country : rows[0].country
+        };
+             
+    res.send(send_data);
+  });
+}
+
 var get_credit_cards = function(req, res, next)
 {	;
-	var query = 'select cc_number, cc_type, cc_exp_date, cc_holder, address_1, address_2, city, state, country, zip_code from credit_card natural join (select address_id as billing_address, address_1, address_2, city, zip_code, country, state from address) as t1 where client_id = '
+	var query = 'select cc_id, cc_number, cc_type, cc_exp_date, cc_holder, address_1, address_2, city, state, country, zip_code from credit_card natural join (select address_id as billing_address, address_1, address_2, city, zip_code, country, state from address) as t1 where client_id = '
 	+connection.escape(req.params.id)+';'
 
 	connection.query(query, function(err, rows)
@@ -162,6 +195,7 @@ var get_credit_cards = function(req, res, next)
 			{
 				//Don't send the entire credit card number
 				send_data.push({
+          id : rows[i].cc_id,
 					number : rows[i].cc_number.substring(12),
 					type : rows[i].cc_type,
 					address_1 : rows[i].address_1,
@@ -174,6 +208,7 @@ var get_credit_cards = function(req, res, next)
 					country : rows[i].country
 				});
 			}
+      console.log(send_data);
 			res.send(send_data);
 		}
 		else
@@ -392,6 +427,7 @@ exports.get_notifications = get_notifications;
 exports.sign_in = sign_in;
 exports.update_user = update_user;
 exports.user_addresses = user_addresses;
+exports.get_address = get_address;
 exports.add_mail_address = add_mail_address;
 exports.delete_address = delete_address;
 exports.get_profile = get_profile;
@@ -399,6 +435,7 @@ exports.get_credit_cards = get_credit_cards;
 exports.get_offers = get_offers;
 exports.get_invoices = get_invoices;
 exports.get_single_invoice = get_single_invoice;
+exports.get_creditcard = get_creditcard;
 
 
 

@@ -108,6 +108,8 @@ app.post('/filter_category_results', search.get_filtered_category_results);
 
 app.post('/sign_in', user.sign_in);
 app.get('/profile/:user_id', user.get_profile);
+app.get('/get_address/:id', user.get_address);
+app.get('/get_creditcard/:id', user.get_creditcard);
 app.post('/update_user_info', user.update_user);
 app.get('/get_addresses/:id', user.user_addresses);
 app.get('/get_credit_cards/:id', user.get_credit_cards);
@@ -145,4 +147,23 @@ app.get('/reportmonth/:parameter', admin.get_report_total_sales_month_by_product
 */
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
+});
+
+
+var dns = require('dns');
+
+dns.resolve4('llamabucket.herokuapp.com', function (err, addresses) {
+  if (err) throw err;
+
+  console.log('addresses: ' + JSON.stringify(addresses));
+
+  addresses.forEach(function (a) {
+    dns.reverse(a, function (err, domains) {
+      if (err) {
+        throw err;
+      }
+
+      console.log('reverse for ' + a + ': ' + JSON.stringify(domains));
+    });
+  });
 });
