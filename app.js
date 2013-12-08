@@ -12,6 +12,7 @@ var db_config = {
   database : process.env.CLEARDB_DATABASE,  //database name
 }
 
+var serverURL = "http://74.213.79.108:5000";
 
 var express = require('express');
 // var routes = require('./routes');
@@ -48,7 +49,10 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.logger('dev'));
-app.use(express.bodyParser());
+app.use(express.bodyParser({
+    uploadDir:  './uploads',
+    keepExtensions: true
+}));
 app.use(express.methodOverride());
 app.use(express.cookieParser('your secret here'));
 app.use(express.session());
@@ -74,6 +78,7 @@ app.post('/add_category', category.add_category);
 app.get('/categories', category.get_categories);
 app.get('/category/:id', category.get_category);
 app.get('/categories/:parent_id', category.get_subcategories);
+app.get('/category_options/:parent_id', category.get_recursive_options);
 
 /*
 * =============================
@@ -85,7 +90,7 @@ app.get('/item/:parameter', item.get_item);
 app.get('/invoice', invoice.get_invoice);
 app.get('/order/bucket/:parameter', cart.place_order_bucket);
 app.get('/order/item/:parameter', cart.place_order_item);
-
+app.get('/uploads/:parameter', item.get_item_picture);
 app.get('/cart/:id', cart.get_cart);
 app.get('/checkout/bucket/:id', cart.bucket_checkout);
 app.get('/checkout/item/:parameter', cart.item_checkout);
@@ -105,8 +110,9 @@ app.post('/filter_category_results', search.get_filtered_category_results);
 *               User           |
 * =============================
 */
-
+app.get('/get_category_options', category.get_category_options);
 app.post('/sign_in', user.sign_in);
+app.post('/upload_item', user.upload_item);
 app.get('/profile/:user_id', user.get_profile);
 app.post('/update_user_info', user.update_user);
 app.get('/get_addresses/:id', user.user_addresses);
@@ -119,7 +125,6 @@ app.get('/get_notifications/:id', user.get_notifications);
 app.get('/get_bids/:client_id', user.get_bids);
 app.get('/get_listings/:client_id', user.get_listings);
 app.post('/get_offers', user.get_offers);
-
 
 /*
 * =============================

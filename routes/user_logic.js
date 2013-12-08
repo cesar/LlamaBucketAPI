@@ -8,6 +8,8 @@ var database = require('./database.js');
 
 
 var connection = database.connect_db();
+var serverURL = "http://74.213.79.108:5000";
+
 
 
 // User notifications
@@ -43,17 +45,17 @@ var sign_in = function(req, res, next)
 
 
 	connection.on('error', function(err)
-  {
-    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    {
-      console.log('reconnected');
-      connection =  database.connect_db();
-    }
-    else
-    {
-      throw err;
-    }
-  });
+	{
+		if(err.code == 'PROTOCOL_CONNECTION_LOST')
+		{
+			console.log('reconnected');
+			connection =  database.connect_db();
+		}
+		else
+		{
+			throw err;
+		}
+	});
 
 }
 
@@ -65,47 +67,47 @@ var get_profile = function(req, res, next)
 		+connection.escape(req.params.user_id)+') as t1  natural join (select address_1, address_2, city, zip_code, state, country, client_id from address where is_primary = 1 and client_id = '
 		+connection.escape(req.params.user_id)+') as t2 natural join (select client_id, cc_number, cc_type from credit_card where client_id = '
 		+connection.escape(req.params.user_id)+' and is_primary = 1) as t3 where client_id = '+connection.escape(req.params.user_id);
-	
-	connection.query(query, function(err, user)
+
+connection.query(query, function(err, user)
+{
+	if(!err)
 	{
-		if(!err)
-		{
-			var send_data = {
-				name : user[0].client_firstname + ' ' + user[0].client_lastname,
-				email : user[0].email,
-				rank : user[0].avg_rank,
-				phone : user[0].phone,
-				image : user[0].client_image,
-				credit_card : user[0].cc_number.substring(12), 
-				credit_card_type : user[0].cc_type,
-				address_1 : user[0].address_1,
-				address_2 : user[0].address_2,
-				city : user[0].city,
-				state : user[0].state,
-				zip_code : user[0].zip_code,
-				contry : user[0].country
-			};
+		var send_data = {
+			name : user[0].client_firstname + ' ' + user[0].client_lastname,
+			email : user[0].email,
+			rank : user[0].avg_rank,
+			phone : user[0].phone,
+			image : user[0].client_image,
+			credit_card : user[0].cc_number.substring(12), 
+			credit_card_type : user[0].cc_type,
+			address_1 : user[0].address_1,
+			address_2 : user[0].address_2,
+			city : user[0].city,
+			state : user[0].state,
+			zip_code : user[0].zip_code,
+			contry : user[0].country
+		};
 
-			res.send(send_data);
-		}
-		else
-			throw err;
-	});
+		res.send(send_data);
+	}
+	else
+		throw err;
+});
 
-	
 
-	connection.on('error', function(err)
-  {
-    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    {
-      console.log('reconnected');
-      connection =  database.connect_db();
-    }
-    else
-    {
-      throw err;
-    }
-  });
+
+connection.on('error', function(err)
+{
+	if(err.code == 'PROTOCOL_CONNECTION_LOST')
+	{
+		console.log('reconnected');
+		connection =  database.connect_db();
+	}
+	else
+	{
+		throw err;
+	}
+});
 
 }
 
@@ -134,17 +136,17 @@ var user_addresses = function(req, res, next)
 	});
 
 	connection.on('error', function(err)
-  {
-    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    {
-      console.log('reconnected');
-      connection =  database.connect_db();
-    }
-    else
-    {
-      throw err;
-    }
-  });
+	{
+		if(err.code == 'PROTOCOL_CONNECTION_LOST')
+		{
+			console.log('reconnected');
+			connection =  database.connect_db();
+		}
+		else
+		{
+			throw err;
+		}
+	});
 
 }
 
@@ -181,17 +183,17 @@ var get_credit_cards = function(req, res, next)
 	});
 
 	connection.on('error', function(err)
-  {
-    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    {
-      console.log('reconnected');
-      connection =  database.connect_db();
-    }
-    else
-    {
-      throw err;
-    }
-  });
+	{
+		if(err.code == 'PROTOCOL_CONNECTION_LOST')
+		{
+			console.log('reconnected');
+			connection =  database.connect_db();
+		}
+		else
+		{
+			throw err;
+		}
+	});
 
 }
 
@@ -241,17 +243,17 @@ var get_notifications = function(req, res,err)
 	});
 
 	connection.on('error', function(err)
-  {
-    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    {
-      console.log('reconnected');
-      connection =  database.connect_db();
-    }
-    else
-    {
-      throw err;
-    }
-  });
+	{
+		if(err.code == 'PROTOCOL_CONNECTION_LOST')
+		{
+			console.log('reconnected');
+			connection =  database.connect_db();
+		}
+		else
+		{
+			throw err;
+		}
+	});
 }
 
 var get_bids = function(req, res, err)
@@ -269,48 +271,48 @@ var get_bids = function(req, res, err)
 	});
 
 	connection.on('error', function(err)
-  {
-    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    {
-      console.log('reconnected');
-      connection =  database.connect_db();
-    }
-    else
-    {
-      throw err;
-    }
-  });
+	{
+		if(err.code == 'PROTOCOL_CONNECTION_LOST')
+		{
+			console.log('reconnected');
+			connection =  database.connect_db();
+		}
+		else
+		{
+			throw err;
+		}
+	});
 }
 
 var get_listings = function(req, res, err)
 {		var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item where seller_id ='+ connection.escape(req.param('client_id'))+') as T ON B.listing_id = T.listing_id group by T.listing_id';
-		
-		
-		connection.query( query,function(err, rows){
 
-			if(!err)
-			{
-				res.send({content:rows});
-				console.log({content:rows});
-			}
-			else{
 
-				console.log(err);
-			}
-		});
+connection.query( query,function(err, rows){
 
-		connection.on('error', function(err)
-	  {
-	    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-	    {
-	      console.log('reconnected');
-	      connection =  database.connect_db();
-	    }
-	    else
-	    {
-	      throw err;
-	    }
-	  });
+	if(!err)
+	{
+		res.send({content:rows});
+		console.log({content:rows});
+	}
+	else{
+
+		console.log(err);
+	}
+});
+
+connection.on('error', function(err)
+{
+	if(err.code == 'PROTOCOL_CONNECTION_LOST')
+	{
+		console.log('reconnected');
+		connection =  database.connect_db();
+	}
+	else
+	{
+		throw err;
+	}
+});
 
 
 
@@ -340,52 +342,175 @@ var get_offers = function(req, res, err)
 		}
 	});
 
-		connection.on('error', function(err)
-	  {
-	    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-	    {
-	      console.log('reconnected');
-	      connection =  database.connect_db();
-	    }
-	    else
-	    {
-	      throw err;
-	    }
-	  });
+	connection.on('error', function(err)
+	{
+		if(err.code == 'PROTOCOL_CONNECTION_LOST')
+		{
+			console.log('reconnected');
+			connection =  database.connect_db();
+		}
+		else
+		{
+			throw err;
+		}
+	});
 
 
 }
 
-var get_invoices = function(req, res, err){
+var get_invoices = function(req, res, err)
+{
 	var query = 'select * from listing natural join invoice natural join item natural join client where seller_id = client.client_id and invoice.buyer_id = ' + req.params.parameter;
 	connection.query(query, function(err, rows){
 		if(!err)
-			{
-				res.send(rows);
-				console.log(rows);
-			}
-			else{
+		{
+			res.send(rows);
+			console.log(rows);
+		}
+		else{
 
-				console.log(err);
-			}
+			console.log(err);
+		}
 	});
 }
 
-var get_single_invoice = function(req, res, err){
-		var query = 'select final_price, item_name, cc_number, invoice_date as date, address_1, address_2, city, state, zip_code, concat(client_firstname, " ", client_lastname) as seller_name from listing natural join invoice natural join item natural join client natural join credit_card natural join address where seller_id = client.client_id and invoice_id = ' + req.params.parameter;
-		connection.query(query, function(err, rows){
-			if(!err)
-			{
-				res.send(rows);
-				console.log(rows);
-			}
-			else{
+var get_single_invoice = function(req, res, err)
+{
+	var query = 'select final_price, item_name, cc_number, invoice_date as date, address_1, address_2, city, state, zip_code, concat(client_firstname, " ", client_lastname) as seller_name from listing natural join invoice natural join item natural join client natural join credit_card natural join address where seller_id = client.client_id and invoice_id = ' + req.params.parameter;
+	connection.query(query, function(err, rows){
+		if(!err)
+		{
+			res.send(rows);
+			console.log(rows);
+		}
+		else{
 
-				console.log(err);
-			}
-		});
+			console.log(err);
+		}
+	});
 }
 
+//User uploads listing into the db
+var upload_item = function(req, res, err)
+{	
+
+	var dateFormat = require('dateformat');
+	var item_time = req.body.item_time;
+	var item_time_ms = item_time * 24 * 60 * 60 * 1000;
+
+	var current_date = new Date();
+	var current_ms = current_date.getTime();
+
+	var exp_date_ms = item_time_ms + current_ms;
+
+	var exp_date = new Date(exp_date_ms);
+
+	var item_type = req.body.item_type;
+
+
+	var item_insert_query = 'INSERT INTO item (item_name, item_image, item_description, item_brand, item_year, item_category) VALUES('+
+		connection.escape(req.body.item_name) + ',' + connection.escape(serverURL + '/' + req.files.file.ws.path) + ',' 
+		+ connection.escape(req.body.item_description) + ','+ connection.escape(req.body.item_brand) + ',' 
+		+ connection.escape(req.body.item_year) + ',' + connection.escape(req.body.item_category) + ')';
+	console.log("INSERT ITEM QUERY: " + item_insert_query)
+
+	connection.query(item_insert_query, function(err, rows)
+		{	if(!err)
+			{	
+				var type_query;
+
+				var listing_query = 'INSERT INTO listing (price, start_bid, exp_date, seller_id, item_id, is_active,  is_auction, buyout_price, shipping_price, shipping_service, handle_time) VALUES(';
+
+
+				var item_id = rows.insertId;
+
+				if(item_type == "bid")
+				{
+
+					type_query =  connection.escape(parseFloat(req.body.start_bid)) + ',' + 
+					connection.escape(parseFloat(req.body.start_bid)) + ',' + 
+					connection.escape(dateFormat(exp_date, "isoDateTime")) + ',' + 
+					connection.escape(parseInt(req.body.user_id))+ ',' + 
+					connection.escape(item_id)+ ',' + connection.escape(1) + ','+ 
+					connection.escape("bid") +',' + 'NULL' +',';
+
+				}
+
+				else if(item_type == "buy")
+				{
+					type_query =  connection.escape(parseFloat(req.body.item_price)) + ', NULL ,' + 
+					connection.escape(dateFormat(exp_date, "isoDateTime")) + ',' + 
+					connection.escape(parseInt(req.body.user_id)) + ',' + 
+					connection.escape(item_id)+ ',' + 
+					connection.escape(1) + ','+ 
+					connection.escape("buy") +',' + connection.escape(parseFloat(req.body.item_price)) + ',';
+
+
+				}
+				else if(item_type =="both"){
+
+
+					type_query =  	connection.escape(parseFloat(req.body.start_bid)) + ','+
+					connection.escape(parseFloat(req.body.start_bid)) + ','+
+					connection.escape(dateFormat(exp_date, "isoDateTime")) + ',' + 
+					connection.escape(parseInt(req.body.user_id)) + ',' + 
+					connection.escape(item_id)+ ',' + 
+					connection.escape(1) + ','+ 
+					connection.escape("both") +',' + 	
+					connection.escape(parseFloat(req.body.buyout_price)) + ',';
+
+
+
+				}
+
+				var shipping_info = connection.escape(parseFloat(req.body.shipping_price)) + ',' + 
+				connection.escape(req.body.shipping_service) + ',' + 
+				connection.escape(req.body.shipping_time) + ');';
+
+
+console.log("UPLOAD LISTING QUERY: " + listing_query + type_query + shipping_info);
+connection.query(listing_query + type_query + shipping_info, function(error, rows)
+{
+	if(!error)
+	{
+
+		res.send({recent_item_id : item_id})
+		console.log(rows);
+	}
+
+	else{
+		console.log(error);
+	}
+});
+
+
+}
+
+else{
+
+	console.log(err);
+}
+
+});
+
+	connection.on('error', function(err)
+	{
+		if(err.code == 'PROTOCOL_CONNECTION_LOST')
+		{
+			console.log('reconnected');
+			connection =  database.connect_db();
+		}
+		else
+		{
+			throw err;
+		}
+	});
+
+
+}
+
+
+exports.upload_item = upload_item;
 exports.get_listings = get_listings;
 exports.get_bids = get_bids;
 exports.get_notifications = get_notifications;

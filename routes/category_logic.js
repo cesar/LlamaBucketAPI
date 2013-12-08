@@ -112,12 +112,91 @@ var add_category = function(req, res, next)
     console.log(result);
   })
 
+
 }
 
 
+
+var get_category_options = function(req, res, next)
+{
+
+
+  connection.query('SELECT * FROM category where parent_id is null', function(err, rows)
+  {
+    if(!err)
+    {
+      console.log(rows);
+
+
+      
+      res.send(rows);
+
+
+
+    }
+    else
+    {
+
+      console.log(err);
+    }
+  });
+
+    connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
+
+}
+
+var get_recursive_options = function(req, res, next)
+{
+
+
+
+  connection.query('SELECT * FROM category WHERE parent_id =' + connection.escape(req.param('parent_id')), function(err, rows)
+  {
+
+    if(!err)
+    {
+
+      console.log(rows);
+      res.send(rows);
+    }
+    else{
+
+      console.log(err);
+    }
+  });
+
+
+    connection.on('error', function(err)
+  {
+    if(err.code == 'PROTOCOL_CONNECTION_LOST')
+    {
+      console.log('reconnected');
+      connection =  database.connect_db();
+    }
+    else
+    {
+      throw err;
+    }
+  });
+
+}
+
+exports.get_category_options = get_category_options;
 
 exports.add_category = add_category;
 exports.get_category = get_category;
 exports.get_categories = get_categories;
 exports.get_subcategories = get_subcategories;
+exports.get_recursive_options = get_recursive_options;
 
