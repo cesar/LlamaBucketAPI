@@ -154,26 +154,24 @@ app.get('/reportmonth/:parameter', admin.get_report_total_sales_month_by_product
 
 /*
 * =============================
-<<<<<<< HEAD
 *    Listing BUY, BID          |
 * =============================
 */
 
 app.post('/submit_bid', item.submit_bid);
-/*=======
+/*=============================
 *              Buy             |
 * =============================
 */
-// app.get('/get_balance/:parameter', buy.get_balance);
+app.get('/get_balance/:parameter', buy.get_balance);
 //Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the ITEM ID
 app.post('/insert_invoice/:parameter', invoice.insert_invoice);
 //Pass the listing_id
-// app.post('deactivate_listing/:parameter', buy.deactivate_listing);
-//Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
-// app.post('drop_from_bucket/:parameter', buy.drop_from_bucket);
 app.post('/deactivate_listing/:parameter', buy.deactivate_listing);
 //Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
 app.post('/drop_from_bucket/:parameter', buy.drop_from_bucket);
+//Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
+app.post('/insert_notification/:parameter', buy.insert_notification);
 
 /*
 * =============================

@@ -49,7 +49,7 @@ var insert_invoice = function(req, res, next){
 	});
 
 
-	var insert_invoice_query = "insert into invoice (invoice_date, final_price, seller_id, buyer_id, listing_id, credit_card, shipping_address, date_month, date_week, date_day, date_year) values (" + connection.escape(insert_date)+ "," + connection.escape(insert_price) + "," + connection.escape(insert_seller) + "," + connection.escape(insert_buyer) + "," + connection.escape(insert_listing_id) + "," + connection.escape(insert_credit_card) + "," + connection.escape(insert_address) + "," + connection.escape(insert_month) + "," + connection.escape(insert_week) + "," + connection.escape(insert_day) + "," + connection.escape(insert_year) +")";
+	var insert_invoice_query = "insert into invoice (invoice_date, final_price, seller_id, buyer_id, listing_id, credit_card, shipping_address, date_month, date_week, date_day, date_year) values (now()," + connection.escape(insert_price) + "," + connection.escape(insert_seller) + "," + connection.escape(insert_buyer) + "," + connection.escape(insert_listing_id) + "," + connection.escape(insert_credit_card) + "," + connection.escape(insert_address) + "," + connection.escape(insert_month) + "," + connection.escape(insert_week) + "," + connection.escape(insert_day) + "," + connection.escape(insert_year) +")";
 
 	//transaction goes here
 
