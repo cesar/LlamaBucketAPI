@@ -50,8 +50,9 @@ var submit_bid = function(req, res, next)
 
     else{
 
-      //Get current bid value
-      var get_current_bid_query = 'SELECT price FROM listing WHERE item_id ='+connection.escape(item_id);
+
+      //Get current bid value need to make a query that gets seller_id, price and the highest bidder
+      var get_current_bid_query = 'SELECT *, count(listing_id) as bid_count, max(bid_amount) as max_bid FROM bidding_history natural join ( SELECT * FROM listing WHERE item_id ='+connection.escape(item_id)+') as T';
 
       //Get bank account balance query
       var get_bank_account_balance_query = 'SELECT account_total FROM bank_account WHERE account_owner=' + connection.escape(user_id);
@@ -69,7 +70,25 @@ var submit_bid = function(req, res, next)
 
 
         }
-        else
+
+        if( rows[0].bid_count > 0){
+
+        if( rows[0].bidder_id == user_id)
+        {
+
+          res.send({message: "You're already the highest bidder", issue: "highest_bidder"});
+        }
+      }
+
+        else if(rows[0].seller_id == user_id)
+        {
+
+          res.send({message: "You're the owner of this item", issue: "owner"});
+        }
+      
+      
+
+        else if(rows[0].bid_count == 0)
         {
 
 
@@ -89,6 +108,11 @@ var submit_bid = function(req, res, next)
 
         else
         {
+
+
+         //Check if the user isn't the highest bidder or the owner of the item
+    
+
 
          console.log("GET BANK ACCOUNT RESPONSE: ");
          console.log(rows);
@@ -170,22 +194,13 @@ var submit_bid = function(req, res, next)
 
 
 
-            connection.commit(function(err)
-            {
-              if (err) { 
-                connection.rollback(function()
-                {
-                  throw err;
-                });
-              }
-              console.log('success!');
-            });
+            console.log("BID INSERTED");
           }
         });
 
                 //Notify the person who bidded
         var notify_bidder = 'INSERT INTO user_notifications (client_id, listing_id, is_read, notification_message, notification_date, title)' +
-        'VALUES (' + connection.escape(user_id) + ',' + item_id + ',' + 0 + ', "Your bid on ' + item_name + 'has been accepted","' + 
+        'VALUES (' + connection.escape(user_id) + ',' + item_id + ',' + 0 + ', "Your bid on ' + item_name + ' has been accepted","' + 
           dateFormat(new Date(), "isoDateTime") + '", "Bidded")';
         console.log(notify_bidder);
 
@@ -295,7 +310,17 @@ var submit_bid = function(req, res, next)
 
 
 
-
+  connection.commit(function(err)
+            {
+              if (err) { 
+                connection.rollback(function()
+                {
+                  throw err;
+                });
+              }
+              
+              res.send({issue: "NO ISSUE"});
+            });
 
 });
 
