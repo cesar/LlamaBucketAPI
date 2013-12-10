@@ -745,6 +745,77 @@ exports.creditcard_make_primary = function (req, res, next) {
   });
 };
 
+exports.register_user = function (req, res, next) {
+
+  var new_user = 'insert into client (client_firstname, client_lastname, email, password, phone, client_image, user_active, isAdmin) values (' 
+    + connection.escape(req.body.register_firstname) + ', '
+    + connection.escape(req.body.register_lastname) + ', '
+    + connection.escape(req.body.register_email) + ', '
+    + connection.escape(req.body.register_password) + ', '
+    + connection.escape(req.body.register_phone) + ', "an_image_url_would_go_here", 1, 0)'
+
+  
+
+  connection.beginTransaction( function (err) {
+    if (err) {
+      connection.rollback( function() {
+        throw err;
+      });
+    }
+
+    connection.query(new_user, function (err, first_result) {
+      if (err) {
+        console.log(err);
+        connection.rollback( function() {
+          throw err;
+        });
+      }
+
+      var new_address = 'insert into address (address_1, address_2, city, zip_code, state, country, client_id, is_primary, is_cc_active, is_active) values ('
+        + connection.escape(req.body.register_address1) + ', '
+        + connection.escape(req.body.register_address2) + ', '
+        + connection.escape(req.body.register_city) + ', '
+        + connection.escape(req.body.register_zipcode) + ', '
+        + connection.escape(req.body.register_state) + ', '
+        + connection.escape(req.body.register_country) + ', '
+        + connection.escape(first_result.insertId) + ', 0, 0, 1)';
+
+      connection.query(new_address, function (err, second_result) {
+        if (err) {
+          console.log(err);
+          connection.rollback( function() {
+            throw err;
+          });
+        }
+
+        var new_creditcard = 'insert into credit_card (client_id, cc_number, cc_type, cc_holder, cc_exp_date, billing_address, is_primary, is_active) values ('
+          + connection.escape(first_result.insertId) + ', '
+          + connection.escape(req.body.register_creditcard_number) + ', '
+          + connection.escape(req.body.register_creditcard_type) + ', '
+          + connection.escape(req.body.register_firstname + ' ' +req.body.register_lastname) + ', '
+          + connection.escape(req.body.register_creditcard_expdate) + ', '
+          + connection.escape(second_result.insertId) + ', 0, 1)';
+
+        connection.query(new_creditcard, function (err, thrird_result) {
+          if (err) {
+            console.log(err);
+            connection.rollback( function () {
+              throw err;
+            });
+          }
+
+          connection.commit( function(err) {
+            if (err) {
+              connection.rollback( function () {
+                throw err;
+              });
+            }
+          });
+        });
+      });
+    });
+  });
+};
 
 
 

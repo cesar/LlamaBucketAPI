@@ -107,6 +107,7 @@ app.post('/filter_category_results', search.get_filtered_category_results);
 */
 
 app.post('/sign_in', user.sign_in);
+app.post('/register_user', user.register_user);
 app.get('/profile/:user_id', user.get_profile);
 app.get('/get_address/:id', user.get_address);
 app.get('/get_creditcard/:id', user.get_creditcard);
