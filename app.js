@@ -23,6 +23,7 @@ var category = require('./routes/category_logic');
 var item = require('./routes/item_logic');
 var invoice = require('./routes/invoice_logic');
 var admin = require('./routes/admin_logic');
+var buy = require('./routes/buy_logic');
 var http = require('http');
 var path = require('path');
 
@@ -101,7 +102,6 @@ app.get('/checkout_address', cart.get_address);
 app.get('/search/:parameter', search.get_results);
 app.post('/filter_results', search.get_filtered_results);
 app.post('/filter_category_results', search.get_filtered_category_results);
-app.post('insert_invoice/:parameter', invoice.insert_invoice);//the parameter contains the client_id of the buyer followed by an underscore and then the item_id
 
 
 
@@ -146,7 +146,18 @@ app.get('/reportday/:parameter', admin.get_report_total_sales_day_by_product);
 app.get('/reportweek/:parameter', admin.get_report_total_sales_week_by_product);
 app.get('/reportmonth/:parameter', admin.get_report_total_sales_month_by_product);
 
-
+/*
+* =============================
+*              Buy             |
+* =============================
+*/
+app.get('/get_balance/:parameter', buy.get_balance);
+//Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the ITEM ID
+app.post('insert_invoice/:parameter', invoice.insert_invoice);
+//Pass the listing_id
+app.post('deactivate_listing/:parameter', buy.deactivate_listing);
+//Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
+app.post('drop_from_bucket/:parameter', buy.drop_from_bucket);
 
 /*
 * =============================
