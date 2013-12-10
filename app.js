@@ -101,6 +101,7 @@ app.get('/checkout_address', cart.get_address);
 app.get('/search/:parameter', search.get_results);
 app.post('/filter_results', search.get_filtered_results);
 app.post('/filter_category_results', search.get_filtered_category_results);
+app.post('insert_invoice/:parameter', invoice.insert_invoice);//the parameter contains the client_id of the buyer followed by an underscore and then the item_id
 
 
 
