@@ -19,7 +19,7 @@ exports.get_balance = function(req, res, next){
 		}
 	});
 
-	connection.on('error', function(err){}
+	connection.on('error', function(err){
     	if(err.code == 'PROTOCOL_CONNECTION_LOST')
     	{	
           	console.log('reconnected');
@@ -75,7 +75,7 @@ exports.deactivite_listing = function(req, res, next){
 	});
 
 
-	connection.on('error', function(err){}
+	connection.on('error', function(err){
     	if(err.code == 'PROTOCOL_CONNECTION_LOST')
     	{	
           	console.log('reconnected');
@@ -136,7 +136,7 @@ exports.drop_from_bucket = function(req, res, next){
 	});
 
 
-	connection.on('error', function(err){}
+	connection.on('error', function(err){
     	if(err.code == 'PROTOCOL_CONNECTION_LOST')
     	{	
           	console.log('reconnected');
