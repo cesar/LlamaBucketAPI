@@ -112,6 +112,8 @@ app.post('/filter_category_results', search.get_filtered_category_results);
 app.get('/get_category_options', category.get_category_options);
 app.post('/sign_in', user.sign_in);
 app.post('/upload_item', user.upload_item);
+
+app.post('/register_user', user.register_user);
 app.get('/profile/:user_id', user.get_profile);
 app.get('/get_address/:id', user.get_address);
 app.get('/get_creditcard/:id', user.get_creditcard);
@@ -127,7 +129,12 @@ app.get('/get_notifications/:id', user.get_notifications);
 app.get('/get_bids/:client_id', user.get_bids);
 app.get('/get_listings/:client_id', user.get_listings);
 app.post('/get_offers', user.get_offers);
+app.del('/delete_creditcard/:id', user.delete_creditcard);
+
 app.del('/delete_creditcard/:id', user.delete_creditcard)
+app.put('/make_primary_address/:id', user.address_make_primary);
+app.put('/make_primary_creditcard/:id', user.creditcard_make_primary);
+
 
 /*
 * =============================
@@ -146,13 +153,23 @@ app.get('/reportmonth/:parameter', admin.get_report_total_sales_month_by_product
 
 /*
 * =============================
+<<<<<<< HEAD
+*    Listing BUY, BID          |
+* =============================
+*/
+
+app.post('/submit_bid', item.submit_bid);
+/*=======
 *              Buy             |
 * =============================
 */
-app.get('/get_balance/:parameter', buy.get_balance);
+// app.get('/get_balance/:parameter', buy.get_balance);
 //Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the ITEM ID
 app.post('/insert_invoice/:parameter', invoice.insert_invoice);
 //Pass the listing_id
+// app.post('deactivate_listing/:parameter', buy.deactivate_listing);
+//Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
+// app.post('drop_from_bucket/:parameter', buy.drop_from_bucket);
 app.post('/deactivate_listing/:parameter', buy.deactivate_listing);
 //Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
 app.post('/drop_from_bucket/:parameter', buy.drop_from_bucket);
