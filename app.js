@@ -101,6 +101,7 @@ app.get('/checkout_address', cart.get_address);
 app.get('/search/:parameter', search.get_results);
 app.post('/filter_results', search.get_filtered_results);
 app.post('/filter_category_results', search.get_filtered_category_results);
+app.post('insert_invoice/:parameter', invoice.insert_invoice);//the parameter contains the client_id of the buyer followed by an underscore and then the item_id
 
 
 
@@ -114,17 +115,21 @@ app.get('/get_category_options', category.get_category_options);
 app.post('/sign_in', user.sign_in);
 app.post('/upload_item', user.upload_item);
 app.get('/profile/:user_id', user.get_profile);
+app.get('/get_address/:id', user.get_address);
+app.get('/get_creditcard/:id', user.get_creditcard);
 app.post('/update_user_info', user.update_user);
-app.get('/get_addresses/:id', user.user_addresses);
-app.get('/get_credit_cards/:id', user.get_credit_cards);
-app.post('/add_mail_address', user.add_mail_address);
-app.post('/delete_address', user.delete_address);
+app.get('/get_addresses/:id', user.get_address_list);
+app.get('/get_credit_cards/:id', user.get_creditcard_list);
+app.post('/add_mail_address/:id', user.add_address);
+app.post('/add_new_creditcard/:id', user.add_creditcard);
+app.del('/delete_address/:id', user.delete_address);
 app.get('/userinvoice/:parameter', user.get_invoices);
 app.get('/singleinvoice/:parameter', user.get_single_invoice);
 app.get('/get_notifications/:id', user.get_notifications);
 app.get('/get_bids/:client_id', user.get_bids);
 app.get('/get_listings/:client_id', user.get_listings);
 app.post('/get_offers', user.get_offers);
+app.del('/delete_creditcard/:id', user.delete_creditcard)
 
 /*
 * =============================
@@ -156,4 +161,23 @@ app.post('/submit_bid', item.submit_bid);
 */
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
+});
+
+
+var dns = require('dns');
+
+dns.resolve4('llamabucket.herokuapp.com', function (err, addresses) {
+  if (err) throw err;
+
+  console.log('addresses: ' + JSON.stringify(addresses));
+
+  addresses.forEach(function (a) {
+    dns.reverse(a, function (err, domains) {
+      if (err) {
+        throw err;
+      }
+
+      console.log('reverse for ' + a + ': ' + JSON.stringify(domains));
+    });
+  });
 });
