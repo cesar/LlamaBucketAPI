@@ -355,6 +355,16 @@ var submit_bid = function(req, res, next)
 
 
 }
+
+exports.update_item = function(req, res, next)
+{
+    
+
+
+
+
+
+}
 exports.submit_bid = submit_bid;
 exports.get_item = get_item;
 exports.get_item_picture = get_item_picture;
