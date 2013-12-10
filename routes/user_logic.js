@@ -59,35 +59,67 @@ exports.sign_in = function(req, res, next)
 exports.get_profile = function(req, res, next)
 {
 	//Get the necesary user information, arrange correctly as a JSON, send to client.
-	var query = 'select client_firstname, client_lastname, client_image, email, phone, avg_rank, address_1, address_2, city, zip_code, state, country, cc_number, cc_type from client natural join (select rankee_id, avg(rank) as avg_rank from user_ranking where rankee_id = '
-		+connection.escape(req.params.user_id)+') as t1  natural join (select address_1, address_2, city, zip_code, state, country, client_id from address where is_primary = 1 and client_id = '
-		+connection.escape(req.params.user_id)+') as t2 natural join (select client_id, cc_number, cc_type from credit_card where client_id = '
-		+connection.escape(req.params.user_id)+' and is_primary = 1) as t3 where client_id = '+connection.escape(req.params.user_id);
-	
-	connection.query(query, function(err, user)
-	{
-		if(!err)
-		{
-			var send_data = {
-				name : user[0].client_firstname + ' ' + user[0].client_lastname,
-				email : user[0].email,
-				rank : user[0].avg_rank,
-				phone : user[0].phone,
-				image : user[0].client_image,
-				credit_card : user[0].cc_number.substring(12), 
-				credit_card_type : user[0].cc_type,
-				address_1 : user[0].address_1,
-				address_2 : user[0].address_2,
-				city : user[0].city,
-				state : user[0].state,
-				zip_code : user[0].zip_code,
-				contry : user[0].country
-			};
+	var user_information = 'select client_firstname, client_lastname, client_image, email, phone, address_1, address_2, city, zip_code, state, country, cc_number, cc_type from client natural join (select address_1, address_2, city, zip_code, state, country, client_id from address where is_primary = 1) as t1 natural join (select client_id, cc_number, cc_type from credit_card where is_primary = 1) as t2 where client_id = '+connection.escape(req.params.user_id);
+  
+  var user_rank = 'select avg(rank) as rank from user_ranking where rankee_id =' +connection.escape(req.params.user_id);
 
-			res.send(send_data);
-		}
-		else
-			throw err;
+	connection.query(user_information, function (err, user)
+	{
+
+		if (err) {
+      throw err;
+    }
+
+    connection.query(user_rank, function (err, rank) {
+
+      if (err) {
+        throw err;
+      }
+
+      if (rank[0].rank === null) {
+
+        var send_data = {
+            name : user[0].client_firstname + ' ' + user[0].client_lastname,
+            email : user[0].email,
+            rank : 0,
+            phone : user[0].phone,
+            image : user[0].client_image,
+            credit_card : user[0].cc_number.substring(12), 
+            credit_card_type : user[0].cc_type,
+            address_1 : user[0].address_1,
+            address_2 : user[0].address_2,
+            city : user[0].city,
+            state : user[0].state,
+            zip_code : user[0].zip_code,
+            contry : user[0].country
+        };
+
+        res.send(send_data);
+
+      }
+
+      else {
+        var send_data = {
+
+            name : user[0].client_firstname + ' ' + user[0].client_lastname,
+            email : user[0].email,
+            rank : rank[0].rank,
+            phone : user[0].phone,
+            image : user[0].client_image,
+            credit_card : user[0].cc_number.substring(12), 
+            credit_card_type : user[0].cc_type,
+            address_1 : user[0].address_1,
+            address_2 : user[0].address_2,
+            city : user[0].city,
+            state : user[0].state,
+            zip_code : user[0].zip_code,
+            contry : user[0].country
+
+        };
+
+        res.send(send_data);
+      }
+		})
 	});
 
 	
@@ -701,6 +733,18 @@ exports.address_make_primary = function(req, res, next) {
     });
   });
 
+   connection.on('error', function(err)
+    {
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      {
+        console.log('reconnected');
+        connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
 
 };
 
@@ -743,9 +787,23 @@ exports.creditcard_make_primary = function (req, res, next) {
       });
     });
   });
+
+  connection.on('error', function(err)
+    {
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      {
+        console.log('reconnected');
+        connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
 };
 
 exports.register_user = function (req, res, next) {
+
 
   var new_user = 'insert into client (client_firstname, client_lastname, email, password, phone, client_image, user_active, isAdmin) values (' 
     + connection.escape(req.body.register_firstname) + ', '
@@ -771,14 +829,27 @@ exports.register_user = function (req, res, next) {
         });
       }
 
-      var new_address = 'insert into address (address_1, address_2, city, zip_code, state, country, client_id, is_primary, is_cc_active, is_active) values ('
-        + connection.escape(req.body.register_address1) + ', '
-        + connection.escape(req.body.register_address2) + ', '
-        + connection.escape(req.body.register_city) + ', '
-        + connection.escape(req.body.register_zipcode) + ', '
-        + connection.escape(req.body.register_state) + ', '
-        + connection.escape(req.body.register_country) + ', '
-        + connection.escape(first_result.insertId) + ', 0, 0, 1)';
+      if (req.body.register_same_address === 'on') {
+        var new_address = 'insert into address (address_1, address_2, city, zip_code, state, country, client_id, is_primary, is_cc_active, is_active) values ('
+          + connection.escape(req.body.register_address1) + ', '
+          + connection.escape(req.body.register_address2) + ', '
+          + connection.escape(req.body.register_city) + ', '
+          + connection.escape(req.body.register_zipcode) + ', '
+          + connection.escape(req.body.register_state) + ', '
+          + connection.escape(req.body.register_country) + ', '
+          + connection.escape(first_result.insertId) + ', 1, 1, 1)';
+      }
+
+      else {
+        var new_address = 'insert into address (address_1, address_2, city, zip_code, state, country, client_id, is_primary, is_cc_active, is_active) values ('
+          + connection.escape(req.body.register_address1) + ', '
+          + connection.escape(req.body.register_address2) + ', '
+          + connection.escape(req.body.register_city) + ', '
+          + connection.escape(req.body.register_zipcode) + ', '
+          + connection.escape(req.body.register_state) + ', '
+          + connection.escape(req.body.register_country) + ', '
+          + connection.escape(first_result.insertId) + ', 1, 0, 1)';
+      }
 
       connection.query(new_address, function (err, second_result) {
         if (err) {
@@ -794,7 +865,7 @@ exports.register_user = function (req, res, next) {
           + connection.escape(req.body.register_creditcard_type) + ', '
           + connection.escape(req.body.register_firstname + ' ' +req.body.register_lastname) + ', '
           + connection.escape(req.body.register_creditcard_expdate) + ', '
-          + connection.escape(second_result.insertId) + ', 0, 1)';
+          + connection.escape(second_result.insertId) + ', 1, 1)';
 
         connection.query(new_creditcard, function (err, thrird_result) {
           if (err) {
@@ -804,17 +875,64 @@ exports.register_user = function (req, res, next) {
             });
           }
 
-          connection.commit( function(err) {
-            if (err) {
-              connection.rollback( function () {
-                throw err;
+          if(!req.body.register_same_address)
+          {
+            //Different addresses
+            var new_billing_address = 'insert into address (address_1, address_2, city, zip_code, state, country, client_id, is_primary, is_cc_active, is_active) values ('
+              + connection.escape(req.body.register_billing_address1) + ', '
+              + connection.escape(req.body.register_billing_address2) + ', '
+              + connection.escape(req.body.register_billing_city) + ', '
+              + connection.escape(req.body.register_billing_zipcode) + ', '
+              + connection.escape(req.body.register_billing_state) + ', '
+              + connection.escape(req.body.register_billing_country) + ', '
+              + connection.escape(first_result.insertId) + ', 0, 1, 0)';
+
+              connection.query(new_billing_address, function (err, fourth_result) {
+                if (err) {
+                  connection.rollback( function () {
+                    throw err;
+                  });
+                }
+
+                connection.commit( function (err) {
+                  if (err) {
+                    connection.rollback( function () {
+                      throw err;
+                    });
+                  }
+                  res.send(200, { id : first_result.insertId});
+                });
               });
-            }
-          });
+
+          }
+
+          else {
+            connection.commit( function(err) {
+              if (err) {
+                connection.rollback( function () {
+                  throw err;
+                });
+              }
+              res.send(200, { id : first_result.insertId});
+            });
+          }
         });
       });
     });
   });
+
+  connection.on('error', function(err)
+    {
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      {
+        console.log('reconnected');
+        connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
 };
 
 
