@@ -1,6 +1,6 @@
 var database = require('./database.js');
 var connection = database.connect_db();
-var serverURL = "http://localhost:5000";
+//var serverURL = "http://localhost:5000";
 
 
 /*
@@ -36,9 +36,9 @@ exports.get_balance = function(req, res, next){
  * Deactivates a listing so that it cannot be shown in a search and be buyable. It can still be viewed.
  * Parameter to be passed is the listing_id.
  */
-exports.deactivite_listing = function(req, res, next){
+exports.deactivate_listing = function(req, res, next){
 	
-	var update_listing_query = 'update listing set is_active = 0 where listing_id = ' + connection.escape(req.params.parameter);
+	var update_listing_query = 'update listing set listing_is_active = 0 where listing_id = ' + connection.escape(req.params.parameter);
 
 
 	connection.beginTransaction(function(err) {
@@ -54,23 +54,17 @@ exports.deactivite_listing = function(req, res, next){
       		});
     	}
 
-    	var log = 'Post ' + result.insertId + ' added';
+    	connection.commit(function(err){
+        if(err){
+          connection.rollback(function(){
+            throw err;
+          });
+        }
 
-    	connection.query('INSERT INTO log SET data=?', log, function(err, result) {
-     		if (err) { 
-        		connection.rollback(function() {
-          			throw err;
-        		});
-      		}  
-      		connection.commit(function(err) {
-        		if (err) { 
-          			connection.rollback(function() {
-		            	throw err;
-        				});
-        			}
-        		console.log('success!');
-      			});
-    		});
+        res.send(200);
+      });
+
+    	
   		});
 	});
 

@@ -2,7 +2,7 @@ var database = require('./database.js');
 
 
 var connection = database.connect_db();
-var serverURL = "http://localhost:5000";
+//var serverURL = "http://localhost:5000";
 
 var insert_invoice = function(req, res, next){
 
