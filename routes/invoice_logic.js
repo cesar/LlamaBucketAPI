@@ -25,7 +25,7 @@ var insert_invoice = function(req, res, next){
 	var client_item_id_string = req.params.parameter;
 	var stop;
 
-	for(var i = 0; str.substring(i, i+1) != "_"; i++){
+	for(var i = 0; client_item_id_string.substring(i, i+1) != "_"; i++){
 		insert_buyer = insert_buyer + client_item_id_string.substring(i, i+1);
 		stop = i +2;
 	}
