@@ -71,24 +71,22 @@ var submit_bid = function(req, res, next)
 
         }
 
-        if( rows[0].bid_count > 0){
 
-        if( rows[0].bidder_id == user_id)
-        {
-
-          res.send({message: "You're already the highest bidder", issue: "highest_bidder"});
-        }
-      }
+       
+      
 
         else if(rows[0].seller_id == user_id)
         {
 
           res.send({message: "You're the owner of this item", issue: "owner"});
         }
-      
+
+
+
+        
       
 
-        else if(rows[0].bid_count == 0)
+        else 
         {
 
 
@@ -97,6 +95,30 @@ var submit_bid = function(req, res, next)
          current_bid = rows[0].price;
          console.log("PRICE: " + current_bid);
 
+
+         var find_highest_bidder = 'SELECT bidder_id FROM bidding_history natural join listing WHERE item_id='+connection.escape(item_id) + 'and price = bid_amount'
+         connection.query(find_highest_bidder, function(err, rows)
+         {
+
+          if(err) throw err;
+          else if(rows[0].bidder_id == user_id)
+          {
+            console.log("USER IS THE HIGHEST BIDDER");
+                        res.send({message: "You're currently the highest bidder", issue: "highest_bidder"});
+
+          }
+          else{
+            console.log("QUERING THE DB");
+            console.log(get_bank_account_balance_query);
+
+
+
+
+
+
+
+
+         
       //Query the DB for the users bank account balance
       connection.query(get_bank_account_balance_query, function(err, rows)
       {
@@ -276,7 +298,18 @@ var submit_bid = function(req, res, next)
           else
           {
             console.log("UPDATED PRICE");
-
+            
+  connection.commit(function(err)
+            {
+              if (err) { 
+                connection.rollback(function()
+                {
+                  throw err;
+                });
+              }
+              
+              res.send({issue: "NO ISSUE"});
+            });
 
           }
         });
@@ -298,29 +331,24 @@ var submit_bid = function(req, res, next)
 
 });
 
+   }
+
+
+         });
+
 }
 
 
 });
+
+
+
+
+
+
+
+
 }
-
-
-
-
-
-
-
-  connection.commit(function(err)
-            {
-              if (err) { 
-                connection.rollback(function()
-                {
-                  throw err;
-                });
-              }
-              
-              res.send({issue: "NO ISSUE"});
-            });
 
 });
 

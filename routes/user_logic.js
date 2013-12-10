@@ -492,9 +492,11 @@ exports.get_notifications = function(req, res,err)
 * GET all the bids belonging to a single user
 **/
 exports.get_bids = function(req, res, err)
-{	;
+{	
 	console.log(req.param('client_id'));
-	connection.query('select * from bidding_history natural join listing natural join item where bidder_id ='+connection.escape(req.param('client_id'))+' group by listing_id ', function(err, rows)
+  var get_bids_query = 'select *, max(bid_amount) as bid_max from bidding_history natural join listing natural join item where bidder_id ='+connection.escape(req.param('client_id')) +' group by listing_id'
+  console.log(get_bids_query);
+	connection.query(get_bids_query, function(err, rows)
 	{
 		if (!err){
 			res.send({content : rows});
