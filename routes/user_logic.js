@@ -359,15 +359,28 @@ exports.add_address = function(req, res, next)
 */
 exports.delete_address = function(req, res, next)
 {
-	var query = "update address set is_active = 0 where address_id = " + connection.escape(req.params.id);
-  connection.query(query, function (err, data)
+	var get_addresses = 'select * from address where address_id = ' + connection.escape(req.body.id);
+
+  var delete_query = 'update address set is_active = 0 where is_active and address_id = ' + connection.escape(req.params.id);
+  
+  connection.query(get_addresses, function (err, rows)
   {
-    if (!err)
-    {
-      res.send(200);
+    if (err) {
+      throw err;
     }
-    else 
-      res.send(500);
+    console.log(rows);
+
+    if (rows.length > 1) {
+
+      connection.query(delete_query, function (err, result) {
+        if (err) {
+          throw err;
+        }
+        res.send(200);
+      });
+    }
+
+    res.send(401);
   });
 
   connection.on('error', function(err)
@@ -460,15 +473,29 @@ exports.add_creditcard = function (req, res, next)
 **/
 exports.delete_creditcard = function (req, res, next)
 {
-  var query = 'update credit_card set is`_active = 0 where cc_id = ' + connection.escape(req.params.id);
-  connection.query(query, function (err, rows)
+  var delete_query = 'update credit_card set is_active = 0 where cc_id = ' + connection.escape(req.params.id);
+
+  var get_creditcards = 'select * from credit_card where is_active = 1 and client_id = ' + connection.escape(req.body.id);
+
+  connection.query(get_creditcards, function (err, rows)
   {
-    if (!err)
-    {
-      res.send(200);
+    if (err) {
+      throw err;  
     }
-    else
+
+    console.log(rows.length);
+    if (rows.length > 1) {
+      connection.query(delete_query, function (err, result) {
+        if (err) {
+          throw err;
+        }
+        res.send(200);
+      });
+    }
+    else {
+      console.log('Cannot delete credit card');
       res.send(500);
+    }
   });
 
   connection.on('error', function(err)
@@ -483,7 +510,6 @@ exports.delete_creditcard = function (req, res, next)
       throw err;
     }
   });
-
 };
 
 /**
