@@ -123,6 +123,8 @@ app.get('/get_bids/:client_id', user.get_bids);
 app.get('/get_listings/:client_id', user.get_listings);
 app.post('/get_offers', user.get_offers);
 app.del('/delete_creditcard/:id', user.delete_creditcard)
+app.put('/make_primary_address/:id', user.address_make_primary);
+app.put('/make_primary_creditcard/:id', user.creditcard_make_primary);
 
 
 /*

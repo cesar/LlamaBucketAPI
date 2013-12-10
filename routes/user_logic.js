@@ -661,6 +661,91 @@ exports.get_single_invoice = function(req, res, err){
     });
 }
 
+exports.address_make_primary = function(req, res, next) {
+
+   var clear_primaries = 'update address set is_primary = 0 where client_id = ' + req.params.id;
+
+   var set_primary = 'update address set is_primary = 1 where address_id = ' + req.body.current_address;
+
+   connection.beginTransaction( function (err) {
+    if (err) {
+      connection.rollback( function () {
+        throw err;
+      });
+    }
+
+    //First update all user address to be non-primary 
+    connection.query( clear_primaries, function (err, first_result) {
+      if (err) {
+        connection.rollback( function() {
+          throw err;
+        });
+      };
+
+      connection.query(set_primary, function (err, second_result) {
+        if (err) {
+          connection.rollback( function () {
+            throw err;
+          });
+        };
+
+        connection.commit( function (err) {
+          if (err) {
+            connection.rollback( function () {
+              throw err;
+            });
+          };
+
+          res.send(200)
+        });
+      });
+    });
+   })
+
+
+};
+
+exports.creditcard_make_primary = function (req, res, next) {
+
+  var clear_primaries = 'update credit_card set is_primary = 0 where client_id = ' + req.params.id;
+
+  var set_primary = 'update credit_card set is_primary = 1 where cc_id = ' + req.body.current_creditcard;
+
+  connection.beginTransaction( function (err) {
+    if (err) {
+      connection.rollback( function() {
+        throw err;
+      });
+    }
+
+    connection.query(clear_primaries, function (err, first_result) {
+      if (err) {
+        connection.rollback( function() {
+          throw err;
+        });
+      }
+
+      connection.query(set_primary, function (err, second_result) {
+        if (err) {
+          connection.rollback( function () {
+            throw err;
+          });
+        }
+
+        connection.commit( function (err) {
+          if (err) {
+            connection.rollback(function() {
+              throw err;
+            });
+          };
+
+          res.send(200);
+        });
+      });
+    });
+  });
+};
+
 
 
 
