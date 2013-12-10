@@ -23,7 +23,7 @@ var category = require('./routes/category_logic');
 var item = require('./routes/item_logic');
 var invoice = require('./routes/invoice_logic');
 var admin = require('./routes/admin_logic');
-// var buy = require('./routes/buy_logic');
+var buy = require('./routes/buy_logic');
 var http = require('http');
 var path = require('path');
 
@@ -165,11 +165,14 @@ app.post('/submit_bid', item.submit_bid);
 */
 // app.get('/get_balance/:parameter', buy.get_balance);
 //Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the ITEM ID
-app.post('insert_invoice/:parameter', invoice.insert_invoice);
+app.post('/insert_invoice/:parameter', invoice.insert_invoice);
 //Pass the listing_id
 // app.post('deactivate_listing/:parameter', buy.deactivate_listing);
 //Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
 // app.post('drop_from_bucket/:parameter', buy.drop_from_bucket);
+app.post('/deactivate_listing/:parameter', buy.deactivate_listing);
+//Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
+app.post('/drop_from_bucket/:parameter', buy.drop_from_bucket);
 
 /*
 * =============================

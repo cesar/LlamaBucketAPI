@@ -1078,5 +1078,143 @@ exports.register_user = function (req, res, next) {
     });
 };
 
+//User uploads listing into the db
+exports.upload_item = function(req, res, err)
+{        
+
+        var dateFormat = require('dateformat');
+        var item_time = req.body.item_time;
+        var item_time_ms = item_time * 24 * 60 * 60 * 1000;
+
+        var current_date = new Date();
+        var current_ms = current_date.getTime();
+
+        var exp_date_ms = item_time_ms + current_ms;
+
+        var exp_date = new Date(exp_date_ms);
+
+        var item_type = req.body.item_type;
+
+
+        var item_insert_query = 'INSERT INTO item (item_name, item_image, item_description, item_brand, item_year, item_category) VALUES('+
+                connection.escape(req.body.item_name) + ',' + connection.escape(serverURL + '/' + req.files.file.ws.path) + ',' 
+                + connection.escape(req.body.item_description) + ','+ connection.escape(req.body.item_brand) + ',' 
+                + connection.escape(req.body.item_year) + ',' + connection.escape(req.body.item_category) + ')';
+console.log("INSERT ITEM QUERY: " + item_insert_query);
+
+
+connection.beginTransaction(function(err) {
+        if (err) { console.log(err); }
+
+
+        connection.query(item_insert_query, function(err, result)
+        {          
+                if(!err)
+                {        
+                        var type_query;
+
+                        var listing_query = 'INSERT INTO listing (price, start_bid, exp_date, seller_id, item_id, is_active,  is_auction, buyout_price, shipping_price, shipping_service, handle_time) VALUES(';
+
+
+                                var item_id = result.insertId;
+                                console.log("LOG - Item Inserted: " + item_id);
+
+                                if(item_type == "bid")
+                                {
+
+                                        type_query =  connection.escape(parseFloat(req.body.start_bid)) + ',' + 
+                                        connection.escape(parseFloat(req.body.start_bid)) + ',' + 
+                                        connection.escape(dateFormat(exp_date, "isoDateTime")) + ',' + 
+                                        connection.escape(parseInt(req.body.user_id))+ ',' + 
+                                        connection.escape(item_id)+ ',' + connection.escape(1) + ','+ 
+                                        connection.escape("bid") +',' + 'NULL' +',';
+
+                                }
+
+                                else if(item_type == "buy")
+                                {
+                                        type_query =  connection.escape(parseFloat(req.body.item_price)) + ', NULL ,' + 
+                                        connection.escape(dateFormat(exp_date, "isoDateTime")) + ',' + 
+                                        connection.escape(parseInt(req.body.user_id)) + ',' + 
+                                        connection.escape(item_id)+ ',' + 
+                                        connection.escape(1) + ','+ 
+                                        connection.escape("buy") +',' + connection.escape(parseFloat(req.body.item_price)) + ',';
+
+
+                                }
+                                else if(item_type =="both")
+                                {
+
+
+                                        type_query =  connection.escape(parseFloat(req.body.start_bid)) + ','+
+                                        connection.escape(parseFloat(req.body.start_bid)) + ','+
+                                        connection.escape(dateFormat(exp_date, "isoDateTime")) + ',' + 
+                                        connection.escape(parseInt(req.body.user_id)) + ',' + 
+                                        connection.escape(item_id)+ ',' + 
+                                        connection.escape(1) + ','+ 
+                                        connection.escape("both") +',' +         
+                                        connection.escape(parseFloat(req.body.buyout_price)) + ',';
+
+
+
+                                }
+
+                                var shipping_info = connection.escape(parseFloat(req.body.shipping_price)) + ',' + 
+                                connection.escape(req.body.shipping_service) + ',' + 
+                                connection.escape(req.body.shipping_time) + ');';
+
+
+console.log("UPLOAD LISTING QUERY: " + listing_query + type_query + shipping_info);
+
+connection.query(listing_query + type_query + shipping_info, function(error, rows)
+{
+        if(!error)
+        {
+
+                res.send({recent_item_id : item_id})
+                console.log(rows);
+
+
+                connection.commit(function(err) {
+                        if (err) { 
+                                connection.rollback(function() {
+                                        throw err;
+                                });
+                        }
+                        console.log('Insert Listing Success!');
+                });
+        }
+
+        else{
+                console.log(error);
+        }
+});
+
+
+}
+
+
+else{
+
+        console.log(err);
+}
+
+});
+});
+
+
+connection.on('error', function(err)
+{
+        if(err.code == 'PROTOCOL_CONNECTION_LOST')
+        {
+                console.log('reconnected');
+                connection =  database.connect_db();
+        }
+        else
+        {
+                throw err;
+        }
+});
+}
 
 
