@@ -141,7 +141,13 @@ app.get('/reportday/:parameter', admin.get_report_total_sales_day_by_product);
 app.get('/reportweek/:parameter', admin.get_report_total_sales_week_by_product);
 app.get('/reportmonth/:parameter', admin.get_report_total_sales_month_by_product);
 
+/*
+* =============================
+*    Listing BUY, BID          |
+* =============================
+*/
 
+app.post('/submit_bid', item.submit_bid);
 
 /*
 * =============================
