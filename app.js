@@ -100,6 +100,7 @@ app.get('/checkout_address', cart.get_address);
 app.get('/search/:parameter', search.get_results);
 app.post('/filter_results', search.get_filtered_results);
 app.post('/filter_category_results', search.get_filtered_category_results);
+app.post('/buy_item/:id', cart.buy_single_item);
 
 
 
@@ -161,16 +162,15 @@ app.post('/submit_bid', item.submit_bid);
 *              Buy             |
 * =============================
 */
-// app.get('/get_balance/:parameter', buy.get_balance);
+app.get('/get_balance/:parameter', buy.get_balance);
 //Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the ITEM ID
 app.post('/insert_invoice/:parameter', invoice.insert_invoice);
 //Pass the listing_id
-// app.post('deactivate_listing/:parameter', buy.deactivate_listing);
-//Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
-// app.post('drop_from_bucket/:parameter', buy.drop_from_bucket);
 app.post('/deactivate_listing/:parameter', buy.deactivate_listing);
 //Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
 app.post('/drop_from_bucket/:parameter', buy.drop_from_bucket);
+//Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
+app.post('/insert_notification/:parameter', buy.insert_notification);
 
 /*
 * =============================

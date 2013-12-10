@@ -15,7 +15,7 @@ var get_address = function(req,res, err)
 */
 var get_cart = function(req, res, err)
 {
-	var query = 'select * from item natural join (select item_id, price, listing_id from listing where is_active = 1 and is_auction = "buy" or is_auction = "both") as t1 natural join (select listing_id, client_id from bucket where client_id = '
+	var query = 'select * from item natural join (select item_id, price, listing_id from listing where listing_is_active = 1 and is_auction = "buy" or is_auction = "both") as t1 natural join (select listing_id, client_id from bucket where client_id = '
 		+connection.escape(req.params.id)+') as t2';
 
 	connection.query(query, function(err, items)
@@ -60,7 +60,7 @@ var get_cart = function(req, res, err)
 */
 var bucket_checkout  = function(req, res, next)
 {
-	var query = 'select * from item natural join (select item_id, listing_id, price from listing where is_active = 1) as t1 natural join (select listing_id, client_id from bucket where client_id = '
+	var query = 'select * from item natural join (select item_id, listing_id, price from listing where listing_is_active = 1) as t1 natural join (select listing_id, client_id from bucket where client_id = '
 		+connection.escape(req.params.id)+') as t2 natural join (select client_id, address_1, address_2, city, state, country, zip_code from address where is_primary = 1) as t3 natural join (select client_id, cc_number, cc_type, billing_address from credit_card where is_primary = 1) as t4;'
 	
 	connection.query(query, function(err, info)
@@ -242,7 +242,7 @@ var place_order_bucket = function(req, res, next)
 {
 	var today = new Date();
 
-	var query_1 = 'select * from item natural join (select item_id, listing_id, seller_id, price from listing where is_active = 1) as t1 natural join (select listing_id from bucket where client_id = '
+	var query_1 = 'select * from item natural join (select item_id, listing_id, seller_id, price from listing where listing_is_active = 1) as t1 natural join (select listing_id from bucket where client_id = '
 		+connection.escape(req.params.parameter)+') as t2 natural join (select client_firstname, client_lastname, client_id as seller_id from client) as t3;'
 
 	var query_2 = 'select * from address natural join (select client_id, cc_number, cc_type from credit_card) as t1 where client_id = '
@@ -420,6 +420,10 @@ var place_order_item = function(req, res, next)
 	      throw err;
 	    }
 	  });
+};
+
+exports.buy_single_item = function(req, res, next) {
+	console.log(req.params.id);
 };
 
 exports.place_order_bucket = place_order_bucket;
