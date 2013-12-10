@@ -494,7 +494,7 @@ exports.delete_creditcard = function (req, res, next)
     }
     else {
       console.log('Cannot delete credit card');
-      res.send(500);
+      res.send(401);
     }
   });
 
