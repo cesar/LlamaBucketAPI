@@ -215,7 +215,7 @@ exports.get_creditcard = function (req, res, next)
 **/
 exports.get_creditcard_list = function(req, res, next)
 {	;
-	var query = 'select cc_id, cc_number, cc_type, cc_exp_date, cc_holder, address_1, address_2, city, state, country, zip_code from credit_card natural join (select address_id as billing_address, address_1, address_2, city, zip_code, country, state from address) as t1 where credit_card.is_active = 1 and client_id = '
+	var query = 'select cc_id, cc_number, cc_type, cc_exp_date, cc_holder, address_1, address_2, city, state, country, zip_code, is_primary from credit_card natural join (select address_id as billing_address, address_1, address_2, city, zip_code, country, state from address) as t1 where credit_card.is_active = 1 and client_id = '
 	+connection.escape(req.params.id)+';'
 
 	connection.query(query, function(err, rows)
@@ -237,10 +237,10 @@ exports.get_creditcard_list = function(req, res, next)
 					zip_code : rows[i].zip_code,
 					exp_date : rows[i].cc_exp_date,
 					holder : rows[i].cc_holder,
-					country : rows[i].country
+					country : rows[i].country,
+          primary : rows[i].is_primary
 				});
 			}
-      console.log(send_data);
 			res.send(send_data);
 		}
 		else
@@ -663,44 +663,43 @@ exports.get_single_invoice = function(req, res, err){
 
 exports.address_make_primary = function(req, res, next) {
 
+
    var clear_primaries = 'update address set is_primary = 0 where client_id = ' + req.params.id;
 
    var set_primary = 'update address set is_primary = 1 where address_id = ' + req.body.current_address;
 
    connection.beginTransaction( function (err) {
     if (err) {
-      connection.rollback( function () {
+      connection.rollback( function() {
         throw err;
       });
     }
 
-    //First update all user address to be non-primary 
-    connection.query( clear_primaries, function (err, first_result) {
+    connection.query(clear_primaries, function (err, first_result) {
       if (err) {
         connection.rollback( function() {
           throw err;
         });
-      };
+      }
 
       connection.query(set_primary, function (err, second_result) {
         if (err) {
           connection.rollback( function () {
             throw err;
           });
-        };
+        }
 
         connection.commit( function (err) {
           if (err) {
-            connection.rollback( function () {
+            connection.rollback(function() {
               throw err;
             });
-          };
-
-          res.send(200)
+          }; 
+          res.send(200);
         });
       });
     });
-   })
+  });
 
 
 };
