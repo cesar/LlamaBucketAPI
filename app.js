@@ -87,21 +87,21 @@ app.get('/category_options/:parent_id', category.get_recursive_options);
 */
 app.get('/item', item.get_item);
 app.get('/item/:parameter', item.get_item);
-app.get('/invoice', invoice.get_invoice);
+// app.get('/invoice', invoice.get_invoice);
 app.get('/order/bucket/:parameter', cart.place_order_bucket);
 app.get('/order/item/:parameter', cart.place_order_item);
 app.get('/uploads/:parameter', item.get_item_picture);
 app.get('/cart/:id', cart.get_cart);
 app.get('/checkout/bucket/:id', cart.bucket_checkout);
 app.get('/checkout/item/:parameter', cart.item_checkout);
-app.get('/invoice/:parameter', invoice.get_inv_from_id);
+// app.get('/invoice/:parameter', invoice.get_inv_from_id);
 app.post('/add_cart', cart.add_to_cart);
 app.post('/remove_from_cart', cart.remove);
 app.get('/checkout_address', cart.get_address);
 app.get('/search/:parameter', search.get_results);
 app.post('/filter_results', search.get_filtered_results);
 app.post('/filter_category_results', search.get_filtered_category_results);
-app.post('insert_invoice/:parameter', invoice.insert_invoice);//the parameter contains the client_id of the buyer followed by an underscore and then the item_id
+// app.post('insert_invoice/:parameter', invoice.insert_invoice);//the parameter contains the client_id of the buyer followed by an underscore and then the item_id
 
 
 
@@ -129,7 +129,7 @@ app.get('/get_notifications/:id', user.get_notifications);
 app.get('/get_bids/:client_id', user.get_bids);
 app.get('/get_listings/:client_id', user.get_listings);
 app.post('/get_offers', user.get_offers);
-app.del('/delete_creditcard/:id', user.delete_creditcard)
+app.del('/delete_creditcard/:id', user.delete_creditcard);
 
 /*
 * =============================

@@ -95,7 +95,7 @@ var insert_invoice = function(req, res, next){
 
 
 
-	connection.on('error', function(err){}
+	connection.on('error', function(err){
     	if(err.code == 'PROTOCOL_CONNECTION_LOST')
     	{	
           	console.log('reconnected');
