@@ -561,7 +561,7 @@ exports.get_notifications = function(req, res,err)
 exports.get_bids = function(req, res, err)
 {	
 	console.log(req.param('client_id'));
-  var get_bids_query = 'select *, max(bid_amount) as bid_max from bidding_history natural join listing natural join item where bidder_id ='+connection.escape(req.param('client_id')) +' group by listing_id'
+  var get_bids_query = 'select *, max(bid_amount) as bid_max from bidding_history natural join listing natural join item where bidder_id ='+connection.escape(req.param('client_id')) +'and listing_is_active = 1 group by listing_id'
   console.log(get_bids_query);
   connection.query(get_bids_query, function(err, rows)
   {
