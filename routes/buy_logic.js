@@ -82,6 +82,58 @@ exports.deactivate_listing = function(req, res, next){
   	});
 }
 
+exports.insert_to_bucket = function(req, res, next){
+  var client_listing_id_string = req.params.parameter;
+  var client_id = '';
+  var listing_id = '';
+  var stop;
+  for(var i = 0; client_listing_id_string.substring(i, i+1) != "_"; i++){
+    client_id = client_id + client_listing_id_string.substring(i, i+1);
+    stop = i+2;
+  }
+  listing_id = client_listing_id_string.substring(stop, client_listing_id_string.length);
+
+  var insert_to_bucket_query = 'insert into bucket (listing_id, client_id) values (' + connection.escape(listing_id) + ', ' + connection.escape(client_id) + ')';
+  connection.beginTransaction(function(err) {
+      if (err) { 
+        throw err; 
+      }
+      
+      connection.query(insert_to_bucket_query, function(err, result) {
+      
+      if (err) { 
+          connection.rollback(function() {
+            throw err;
+          });
+      }
+
+      connection.commit(function(err){
+        if(err){
+          connection.rollback(function(){
+            throw err;
+          });
+        }
+
+        res.send(200);
+      });
+      
+      });
+  });
+
+  connection.on('error', function(err){
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      { 
+            console.log('reconnected');
+          connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
+
+}
+
 
 exports.drop_from_bucket = function(req, res, next){
 	var client_listing_id_string = req.params.parameter;
@@ -206,6 +258,53 @@ exports.insert_notification = function(req, res, next){
         });
 
 
+  connection.on('error', function(err){
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      { 
+            console.log('reconnected');
+          connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
+}
+
+exports.insert_ranking = function(req, res, next){
+  ranker_rakee_rank_string = req.params.parameter;
+
+  ranker_id = ranker_rakee_rank_string.split('_')[0];
+  rankee_id = ranker_rakee_rank_string.split('_')[1];
+  rank = ranker_rakee_rank_string.split('_')[2];
+
+  var insert_ranking_query = 'insert into user_ranking (ranker_id, rankee_id, rank) values (' + connection.escape(ranker_id) + ', ' + connection.escape(rankee_id) + ', ' + connection.escape(rank) + ')';
+
+  connection.beginTransaction(function(err) {
+      if (err) { 
+        throw err; 
+      }
+      
+      connection.query(insert_ranking_query, function(err, result) {
+      
+      if (err) { 
+          connection.rollback(function() {
+            throw err;
+          });
+      }
+
+      connection.commit(function(err){
+        if(err){
+          connection.rollback(function(){
+            throw err;
+          });
+        }
+
+        res.send(200);
+      });
+      
+      });
+  });
   connection.on('error', function(err){
       if(err.code == 'PROTOCOL_CONNECTION_LOST')
       { 
