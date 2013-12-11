@@ -66,7 +66,7 @@ var submit_bid = function(req, res, next)
 
 
       //Get current bid value need to make a query that gets seller_id, price and the highest bidder
-      var get_current_bid_query = 'SELECT *, count(listing_id) as bid_count, max(bid_amount) as max_bid FROM bidding_history natural join ( SELECT * FROM listing WHERE item_id ='+connection.escape(item_id)+') as T';
+      var get_current_bid_query = 'SELECT seller_id, listing_id , price FROM bidding_history natural join ( SELECT * FROM listing WHERE item_id ='+connection.escape(item_id)+') as T';
 
 
       console.log(get_current_bid_query);
@@ -74,7 +74,7 @@ var submit_bid = function(req, res, next)
 
       //Query the DB for current bid price
       connection.query(get_current_bid_query, function(err,rows)
-      {
+      { console.log(rows);
         if(err)
         {
           console.log(err);
@@ -88,6 +88,7 @@ var submit_bid = function(req, res, next)
 
         else if(rows[0].seller_id == user_id)
         {
+
 
           res.send({message: "You're the owner of this item", issue: "owner"});
         }
@@ -105,20 +106,21 @@ var submit_bid = function(req, res, next)
          //Current bid of the item
          current_bid = rows[0].price;
 
-
+         var listing_id = rows[0].listing_id;
          var find_highest_bidder = 'SELECT bidder_id FROM bidding_history natural join listing WHERE item_id='+connection.escape(item_id) + 'and price = bid_amount'
+         console.log(find_highest_bidder);
          connection.query(find_highest_bidder, function(err, rows)
          {
 
           if(err) throw err;
-          if(rows.length > 0){
-          if(rows[0].bidder_id == user_id)
+          
+          if(rows.length > 0 && rows[0].bidder_id == user_id)
           {
             console.log("USER IS THE HIGHEST BIDDER");
                         res.send({message: "You're currently the highest bidder", issue: "highest_bidder"});
 
           }
-        }
+        
         
            
         else
@@ -199,7 +201,7 @@ var submit_bid = function(req, res, next)
 
                 //Notify the person who bidded
         var notify_bidder = 'INSERT INTO user_notifications (client_id, listing_id, is_read, notification_message, notification_date, title)' +
-        'VALUES (' + connection.escape(user_id) + ',' + item_id + ',' + 0 + ', "Your bid on ' + item_name + ' has been accepted","' + 
+        'VALUES (' + connection.escape(user_id) + ',' + connection.escape(listing_id) + ',' + 0 + ', "Your bid on ' + item_name + ' has been accepted","' + 
           dateFormat(new Date(), "isoDateTime") + '", "Bidded")';
         console.log(notify_bidder);
 
@@ -239,7 +241,7 @@ var submit_bid = function(req, res, next)
           {
 
             var notification_loser_query = 'INSERT INTO user_notifications (client_id, listing_id, is_read, notification_message, notification_date, title)'
-            + 'VALUES(' + connection.escape(rows[0].bidder_id) + ',' + item_id + ',' + 0 + ', "Your bid on ' + item_name + ' has been outbidded","'+
+            + 'VALUES(' + connection.escape(rows[0].bidder_id) + ',' + connection.escape(listing_id) + ',' + 0 + ', "Your bid on ' + item_name + ' has been outbidded","'+
               dateFormat(new Date(), "isoDateTime") + '", "Outbidded")';
             console.log(notification_loser_query);
 
