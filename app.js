@@ -86,6 +86,7 @@ app.get('/category_options/:parent_id', category.get_recursive_options);
 *              Items           |
 * =============================
 */
+app.del('/delete_item', item.delete_item);
 app.get('/item', item.get_item);
 app.get('/item/:parameter', item.get_item);
 app.get('/order/bucket/:parameter', cart.place_order_bucket);
@@ -181,6 +182,8 @@ app.post('/insert_ranking/:parameter', buy.insert_ranking);
 //101 is the client id, -17.99 is the amount to add
 //Also increments the client's total sales.
 app.post('/update_balance/:parameter', buy.update_balance);
+//Pass the item id
+app.get('/get_listing_from_item/:parameter', buy.get_listing_from_item);
 
 app.post('/rank_single_purchase/:id', buy.rank_single_purchase);
 

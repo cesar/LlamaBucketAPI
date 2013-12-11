@@ -686,3 +686,31 @@ exports.rank_bucket_purchase = function (req, res, next) {
 };
 
 
+exports.get_listing_from_item = function(req, res, next){
+
+	connection.query('select * from listing natural join item where item_id = ' + connection.escape(req.params.parameter), function(err, rows){
+		if(!err){
+			console.log('Getting the listing from db...');
+			res.send(rows);
+			console.log(rows[0].listing_id);
+		}
+		else{
+			console.log(err);
+			res.send({error : 'Not found'});
+		}
+	});
+	
+
+	connection.on('error', function(err){
+		if(err.code == 'PROTOCOL_CONNECTION_LOST')
+		{ 
+			console.log('reconnected');
+			connection =  database.connect_db();
+		}
+		else
+		{
+			throw err;
+		}
+	});
+	
+}
