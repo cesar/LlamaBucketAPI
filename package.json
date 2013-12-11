@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "3.4.0",
     "mysql" : "*",
-    "async" : "*"
+    "async" : "*",
+    "dateformat" : "*"
   }
 }
