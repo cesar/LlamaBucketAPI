@@ -176,7 +176,7 @@ var submit_bid = function(req, res, next)
           else
           {
             var bid_listing_id = rows[0].listing_id;
-            var dateFormat = require('dateFormat');
+            var dateFormat = require('dateformat');
 
             var bid_insert_query = 'INSERT INTO bidding_history(bidder_id, listing_id, bid_amount, datetime) VALUES('+
              connection.escape(user_id)+ ',' + 
