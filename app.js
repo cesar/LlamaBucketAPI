@@ -87,7 +87,6 @@ app.get('/category_options/:parent_id', category.get_recursive_options);
 * =============================
 */
 app.get('/item', item.get_item);
-app.post('/update_item', item.update_item);
 app.get('/item/:parameter', item.get_item);
 app.get('/order/bucket/:parameter', cart.place_order_bucket);
 app.get('/order/item/:parameter', cart.place_order_item);
@@ -102,7 +101,7 @@ app.get('/search/:parameter', search.get_results);
 app.post('/filter_results', search.get_filtered_results);
 app.post('/filter_category_results', search.get_filtered_category_results);
 app.post('/buy_item/:id', cart.buy_single_item);
-
+app.get('/get_item_by_listing/:listing_id', item.get_item_id);
 
 
 
