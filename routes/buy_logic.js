@@ -282,7 +282,7 @@ exports.purchase_bucket = function (req, res, next) {
 
   var get_client = 'select * from address natural join credit_card where is_primary = 1 and client_id = ' + connection.escape(req.params.id);
 
-  var remove_from_bucket = 'update bucket set is_active = 0 where client_id = ' + connection.escape(req.params.id);
+  var remove_from_bucket = 'delete from bucket where client_id = ' + connection.escape(req.params.id);
 
   connection.beginTransaction( function (err) {
     if (err) {
@@ -575,8 +575,6 @@ exports.update_balance = function(req, res, next){
 			}
 
 		});
-
-
 
 
 		connection.on('error', function(err){
