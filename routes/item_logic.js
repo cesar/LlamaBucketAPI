@@ -66,7 +66,7 @@ var submit_bid = function(req, res, next)
 
 
       //Get current bid value need to make a query that gets seller_id, price and the highest bidder
-      var get_current_bid_query = 'SELECT seller_id, listing_id , price FROM bidding_history natural join ( SELECT * FROM listing WHERE item_id ='+connection.escape(item_id)+') as T';
+      var get_current_bid_query = 'SELECT seller_id, listing_id , price FROM listing WHERE item_id ='+connection.escape(item_id);
 
 
       console.log(get_current_bid_query);
@@ -85,8 +85,7 @@ var submit_bid = function(req, res, next)
 
        
       
-
-        else if(rows[0].seller_id == user_id)
+        else if(rows.length > 0 && rows[0].seller_id == user_id)
         {
 
 
