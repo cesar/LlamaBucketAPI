@@ -100,7 +100,8 @@ app.get('/checkout_address', cart.get_address);
 app.get('/search/:parameter', search.get_results);
 app.post('/filter_results', search.get_filtered_results);
 app.post('/filter_category_results', search.get_filtered_category_results);
-app.post('/buy_item/:id', cart.buy_single_item);
+app.post('/purchase_item/:id', buy.purchase_item);
+app.post('/purchase_bucket/:id', buy.purchase_bucket);
 
 
 

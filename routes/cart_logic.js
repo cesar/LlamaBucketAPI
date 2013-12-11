@@ -422,10 +422,6 @@ var place_order_item = function(req, res, next)
 	  });
 };
 
-exports.buy_single_item = function(req, res, next) {
-	console.log(req.params.id);
-};
-
 exports.place_order_bucket = place_order_bucket;
 exports.place_order_item = place_order_item;
 exports.get_cart = get_cart;
