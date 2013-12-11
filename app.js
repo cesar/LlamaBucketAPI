@@ -175,6 +175,11 @@ app.post('/insert_notification/:parameter', buy.insert_notification);
 app.post('/insert_to_bucket/:parameter', buy.insert_to_bucket);
 //Pass in the format xxx_yyy_zzz, x is the ranker, y is the rankee, z is the rank
 app.post('/insert_ranking/:parameter', buy.insert_ranking);
+//Pass in the format xxx_yyy, where x is the CLIENT ID and yyy is the balance to ADD
+//Can use a negative number to remove as in 101_-17.99
+//101 is the client id, -17.99 is the amount to add
+//Also increments the client's total sales.
+app.post('/update_balance/:parameter', buy.update_balance);
 
 /*
 * =============================
