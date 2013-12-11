@@ -19,22 +19,25 @@ exports.sign_in = function(req, res, next)
 	connection.query(query, function(err, user){
 		if (!err)
 		{
-			if(user[0].password == req.body.password)
+      if(user.length === 0) {
+        res.send(404);
+      }
+
+			else if(user[0].password == req.body.password)
 			{
 				var send_data = {
 					id : user[0].client_id,
 					isAdmin: user[0].isAdmin
 				}
-				console.log(send_data);
 				res.send(send_data);
 			}
+
 			else
-				res.send({error : 'Incorrect Password'});
+				res.send(404);
 		}
 		//User email does not exist on our records as typed.
 		else{
-			console.log(err);
-			res.send({error : 'Not Found'});
+			res.send(404);
 		}
 	});
 
