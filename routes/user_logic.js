@@ -483,7 +483,7 @@ connection.on('error', function(err)
 exports.delete_creditcard = function (req, res, next)
 {
   var delete_query = 'update credit_card set is_active = 0 where cc_id = ' + connection.escape(req.params.id);
-
+  var dateFormat = require('dateFormat');
   var get_creditcards = 'select * from credit_card where is_active = 1 and client_id = ' + connection.escape(req.body.id);
 
   connection.query(get_creditcards, function (err, rows)
@@ -528,7 +528,7 @@ exports.get_notifications = function(req, res,err)
 {
 	//Get all notifications pertaining to a user.
 	var query ='select * from user_notifications where client_id = '+connection.escape(req.params.id)+' and is_read = 0 ORDER BY notification_date DESC;'
-
+  console.log(query);
 	connection.query(query, function(err, notifications)
 	{
 		if(!err)
@@ -592,7 +592,7 @@ exports.get_bids = function(req, res, err)
 * GET all the listings belonging to a user.
 **/
 exports.get_listings = function(req, res, err)
-{		var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item where seller_id ='+ connection.escape(req.param('client_id'))+') as T ON B.listing_id = T.listing_id group by T.listing_id';
+{		var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item where seller_id ='+ connection.escape(req.param('client_id'))+' and listing_is_active = 1) as T ON B.listing_id = T.listing_id group by T.listing_id';
 
 
 connection.query( query,function(err, rows){

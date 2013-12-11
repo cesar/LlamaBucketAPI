@@ -86,6 +86,7 @@ app.get('/category_options/:parent_id', category.get_recursive_options);
 *              Items           |
 * =============================
 */
+app.del('/delete_item', item.delete_item);
 app.get('/item', item.get_item);
 app.get('/item/:parameter', item.get_item);
 app.get('/order/bucket/:parameter', cart.place_order_bucket);
