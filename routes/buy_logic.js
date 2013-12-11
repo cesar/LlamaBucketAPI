@@ -282,7 +282,7 @@ exports.purchase_bucket = function (req, res, next) {
 
   var get_client = 'select * from address natural join credit_card where is_primary = 1 and client_id = ' + connection.escape(req.params.id);
 
-  var remove_from_bucket = 'delete from bucket where client_id = ' + connection.escape(req.params.id);
+  var remove_from_bucket = 'update bucket set is_active = 0 where client_id = ' + connection.escape(req.params.id);
 
   connection.beginTransaction( function (err) {
     if (err) {
@@ -592,6 +592,98 @@ exports.update_balance = function(req, res, next){
 		});
 	});
 }
+
+
+exports.rank_single_purchase = function (req, res, next) {
+
+  var get_listing_information = 'select * from listing where item_id = ' + connection.escape(req.params.id);
+
+  connection.beginTransaction( function (err) {
+
+    if (err) {
+      connection.rollback( function () {
+        throw err;
+      });
+    }
+
+    connection.query(get_listing_information, function (err, first_result) {
+
+      if (err) {
+        connection.rollback( function () {
+          throw err;
+        });
+      }
+
+      var rank = 'insert into user_ranking (ranker_id, rankee_id, rank) values (' + connection.escape(req.body.user_id) + ', ' + first_result[0].seller_id + ', ' +connection.escape(req.body.rating) + ')';
+
+      connection.query(rank, function (err, second_result) {
+
+        if (err) {
+          connection.rollback( function () {
+            throw err;
+          });
+        }
+
+        connection.commit( function (err) {
+
+          if (err) {
+            connection.rollback( function () {
+              throw err;
+            });
+          }
+
+          res.send(200)
+        });
+      });
+    });
+  });
+
+};
+
+exports.rank_bucket_purchase = function (req, res, next) {
+
+  var get_listing_information = 'select * from listing where item_id = ' + connection.escape(req.body.item_id);
+
+  connection.beginTransaction( function (err) {
+
+    if (err) {
+      connection.rollback( function () {
+        throw err;
+      });
+    }
+
+    connection.query(get_listing_information, function (err, first_result) {
+
+      if (err) {
+        connection.rollback( function () {
+          throw err;
+        });
+      }
+
+      var rank = 'insert into user_ranking (ranker_id, rankee_id, rank) values (' + connection.escape(req.params.id) + ', ' + first_result[0].seller_id + ', ' +connection.escape(req.body.rating) + ')';
+
+      connection.query(rank, function (err, second_result) {
+
+        if (err) {
+          connection.rollback( function () {
+            throw err;
+          });
+        }
+
+        connection.commit( function (err) {
+
+          if (err) {
+            connection.rollback( function () {
+              throw err;
+            });
+          }
+
+          res.send(200)
+        });
+      });
+    });
+  });
+};
 
 
 exports.get_listing_from_item = function(req, res, next){

@@ -185,6 +185,10 @@ app.post('/update_balance/:parameter', buy.update_balance);
 //Pass the item id
 app.get('/get_listing_from_item/:parameter', buy.get_listing_from_item);
 
+app.post('/rank_single_purchase/:id', buy.rank_single_purchase);
+
+app.post('/rank_bucket_purchase/:id', buy.rank_bucket_purchase);
+
 /*
 * =============================
 *       Create the server      |
