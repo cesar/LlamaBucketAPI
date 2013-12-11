@@ -186,7 +186,6 @@ exports.drop_from_bucket = function(req, res, next){
       	throw err;
     	}
   	});
-
 }
 
 
@@ -206,11 +205,6 @@ exports.insert_notification = function(req, res, next){
 
 
   var new_message = "You have sold ";
-  
-  
- 
-
-
   connection.beginTransaction(function(err) {
      
       if (err) { 
