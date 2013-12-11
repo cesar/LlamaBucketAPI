@@ -527,7 +527,7 @@ exports.delete_creditcard = function (req, res, next)
 exports.get_notifications = function(req, res,err)
 {
 	//Get all notifications pertaining to a user.
-	var query ='select * from user_notifications where client_id = '+connection.escape(req.params.id)+' and is_read = 0 ORDER BY notification_date DESC;'
+	var query ='select * from user_notifications where client_id = '+connection.escape(req.params.id)+' and is_read = 0  ORDER BY notification_date DESC LIMIT 10;'
   console.log(query);
 	connection.query(query, function(err, notifications)
 	{
