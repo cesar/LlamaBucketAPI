@@ -182,6 +182,8 @@ app.post('/insert_ranking/:parameter', buy.insert_ranking);
 //101 is the client id, -17.99 is the amount to add
 //Also increments the client's total sales.
 app.post('/update_balance/:parameter', buy.update_balance);
+//Pass the item id
+app.get('/get_listing_from_item/:parameter', buy.get_listing_from_item);
 
 /*
 * =============================
@@ -193,20 +195,4 @@ http.createServer(app).listen(app.get('port'), function(){
 });
 
 
-var dns = require('dns');
 
-dns.resolve4('llamabucket.herokuapp.com', function (err, addresses) {
-  if (err) throw err;
-
-  console.log('addresses: ' + JSON.stringify(addresses));
-
-  addresses.forEach(function (a) {
-    dns.reverse(a, function (err, domains) {
-      if (err) {
-        throw err;
-      }
-
-      console.log('reverse for ' + a + ': ' + JSON.stringify(domains));
-    });
-  });
-});

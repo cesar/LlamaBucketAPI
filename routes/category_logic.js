@@ -12,7 +12,7 @@ var connection = database.connect_db();
 * Get all the categories from the database
 * Send them to the client
 */
-var get_categories = function(req, res, next)
+exports.get_categories = function(req, res, next)
 {
   connection.query('select * from category', function(err, rows){
     if(!err)
@@ -21,26 +21,24 @@ var get_categories = function(req, res, next)
       console.log(err);
   });
 
-  connection.on('error', function(err)
-  {
-    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    {
-      console.log('reconnected');
-      connection =  database.connect_db();
-    }
-    else
-    {
-      throw err;
-    }
-  });
-
+  connection.on('error', function(err){
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      { 
+            console.log('reconnected');
+          connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
 }
 
 /*
 * Get all subcategories from the database.
 * Subcategories are required to have a parent_id 
 */
-var get_subcategories = function(req, res, next)
+exports.get_subcategories = function(req, res, next)
 {
   var send_data = { content : [], parent_name : null};
 
@@ -57,24 +55,24 @@ var get_subcategories = function(req, res, next)
     })
   });
 
-  connection.on('error', function(err)
-  {
-    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    {
-      console.log('reconnected');
-      connection =  database.connect_db();
-    }
-    else
-    {
-      throw err;
-    }
-  });
+  connection.on('error', function(err){
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      { 
+            console.log('reconnected');
+          connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
+
 }
 
 /*
 * Get a specific category from the database
 */
-var get_category = function(req, res,next)
+exports.get_category = function(req, res,next)
 {
   var id = req.param('id');
 
@@ -85,18 +83,17 @@ var get_category = function(req, res,next)
       console.log(err);
   });
 
-  connection.on('error', function(err)
-  {
-    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    {
-      console.log('reconnected');
-      connection =  database.connect_db();
-    }
-    else
-    {
-      throw err;
-    }
-  });
+  connection.on('error', function(err){
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      { 
+            console.log('reconnected');
+          connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
 }
 
 /*
@@ -107,18 +104,30 @@ var get_category = function(req, res,next)
 /*
 * Add a category to the list of categories.
 */
-var add_category = function(req, res, next)
+exports.add_category = function(req, res, next)
 {
   connection.query('insert into category (category_name, parent_id) values('+connection.escape(req.body.category)+', '+connection.escape(req.body.parent)+')', function(err, result){
     console.log(result);
-  })
+  });
+
+  connection.on('error', function(err){
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      { 
+            console.log('reconnected');
+          connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
 
 
 }
 
 
 
-var get_category_options = function(req, res, next)
+exports.get_category_options = function(req, res, next)
 {
 
 
@@ -142,22 +151,23 @@ var get_category_options = function(req, res, next)
     }
   });
 
-    connection.on('error', function(err)
-  {
-    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    {
-      console.log('reconnected');
-      connection =  database.connect_db();
-    }
-    else
-    {
-      throw err;
-    }
-  });
+  connection.on('error', function(err){
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      { 
+            console.log('reconnected');
+          connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
+
+    
 
 }
 
-var get_recursive_options = function(req, res, next)
+exports.get_recursive_options = function(req, res, next)
 {
 
 
@@ -177,27 +187,16 @@ var get_recursive_options = function(req, res, next)
     }
   });
 
-
-    connection.on('error', function(err)
-  {
-    if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    {
-      console.log('reconnected');
-      connection =  database.connect_db();
-    }
-    else
-    {
-      throw err;
-    }
-  });
+  connection.on('error', function(err){
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      { 
+            console.log('reconnected');
+          connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
 
 }
-
-exports.get_category_options = get_category_options;
-
-exports.add_category = add_category;
-exports.get_category = get_category;
-exports.get_categories = get_categories;
-exports.get_subcategories = get_subcategories;
-exports.get_recursive_options = get_recursive_options;
-
