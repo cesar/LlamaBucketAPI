@@ -181,6 +181,8 @@ app.post('/insert_ranking/:parameter', buy.insert_ranking);
 //101 is the client id, -17.99 is the amount to add
 //Also increments the client's total sales.
 app.post('/update_balance/:parameter', buy.update_balance);
+//Pass the item id
+app.get('/get_listing_from_item/:parameter', buy.get_listing_from_item);
 
 /*
 * =============================
