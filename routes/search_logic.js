@@ -79,7 +79,7 @@ var get_filtered_results = function(req, res, next)
 
 
 	console.log(price_filter_query);
-	var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category = cat_id and item_name like '+ connection.escape(search_param)+ type_query + price_filter_query+') as T ON B.listing_id = T.listing_id group by T.listing_id ' + sort_by_query; 
+	var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category = cat_id and item_name like '+ connection.escape(search_param)+ type_query + price_filter_query+') as T ON B.listing_id = T.listing_id  and listing_is_active = 1 group by T.listing_id ' + sort_by_query; 
 	console.log(query);
 	connection.query(query, function(err, rows)
 	{
@@ -184,7 +184,7 @@ console.log(req.body);
 
 
 	console.log(price_filter_query);
-	var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category ='+connection.escape(req.body.cat_id) + type_query + price_filter_query+') as T ON B.listing_id = T.listing_id group by T.listing_id ' + sort_by_query; 
+	var query = 'select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category ='+connection.escape(req.body.cat_id) + type_query + price_filter_query+') as T ON B.listing_id = T.listing_id and listing_is_active = 1  group by T.listing_id ' + sort_by_query; 
 	console.log(query);
 	connection.query(query, function(err, rows)
 	{
@@ -220,7 +220,7 @@ var get_results = function(req, res, next)
 
 		//Here is where the DB query should normally go.
 		//NOTE: Makes this asynchronous later.
-		connection.query('select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category='+connection.escape(cat)+' and item_category = cat_id) as T ON B.listing_id = T.listing_id group by T.listing_id', function(err, rows){
+		connection.query('select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item natural join category where item_category='+connection.escape(cat)+' and listing_is_active = 1 and item_category = cat_id) as T ON B.listing_id = T.listing_id  group by T.listing_id', function(err, rows){
 				res.send({content : rows});
 				console.log({content:rows});
 		});
@@ -232,7 +232,7 @@ var get_results = function(req, res, next)
 
 		search_terms = '%' + search_terms[1] + '%'
 		
-		connection.query('select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item where item_name like '+connection.escape(search_terms)+') as T ON B.listing_id = T.listing_id group by T.listing_id', function(err, rows){
+		connection.query('select *, count(B.listing_id) as bid_count from bidding_history as B RIGHT JOIN (select * from listing natural join item where item_name like '+connection.escape(search_terms)+' and listing_is_active = 1) as T ON B.listing_id = T.listing_id   group by T.listing_id', function(err, rows){
 			if(!err){
 				res.send({content : rows});
 							console.log({content:rows});
