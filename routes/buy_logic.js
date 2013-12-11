@@ -22,16 +22,16 @@ exports.get_balance = function(req, res, next){
 	});
 
 	connection.on('error', function(err){
-    	if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    	{	
-          	console.log('reconnected');
-      		connection =  database.connect_db();
-    	}
-    	else
-    	{
-      	throw err;
-    	}
-  	});
+			if(err.code == 'PROTOCOL_CONNECTION_LOST')
+			{	
+						console.log('reconnected');
+					connection =  database.connect_db();
+			}
+			else
+			{
+				throw err;
+			}
+		});
 }
 
 /*
@@ -44,44 +44,96 @@ exports.deactivate_listing = function(req, res, next){
 
 
 	connection.beginTransaction(function(err) {
-	  	if (err) { 
-	  		throw err; 
-	  	}
-  		
-  		connection.query(update_listing_query, function(err, result) {
-	    
-	    if (err) { 
-      		connection.rollback(function() {
-        		throw err;
-      		});
-    	}
+			if (err) { 
+				throw err; 
+			}
+			
+			connection.query(update_listing_query, function(err, result) {
+			
+			if (err) { 
+					connection.rollback(function() {
+						throw err;
+					});
+			}
 
-    	connection.commit(function(err){
-        if(err){
-          connection.rollback(function(){
-            throw err;
-          });
-        }
+			connection.commit(function(err){
+				if(err){
+					connection.rollback(function(){
+						throw err;
+					});
+				}
 
-        res.send(200);
-      });
+				res.send(200);
+			});
 
-    	
-  		});
+			
+			});
 	});
 
 
 	connection.on('error', function(err){
-    	if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    	{	
-          	console.log('reconnected');
-      		connection =  database.connect_db();
-    	}
-    	else
-    	{
-      	throw err;
-    	}
-  	});
+			if(err.code == 'PROTOCOL_CONNECTION_LOST')
+			{	
+						console.log('reconnected');
+					connection =  database.connect_db();
+			}
+			else
+			{
+				throw err;
+			}
+		});
+}
+
+exports.insert_to_bucket = function(req, res, next){
+	var client_listing_id_string = req.params.parameter;
+	var client_id = '';
+	var listing_id = '';
+	var stop;
+	for(var i = 0; client_listing_id_string.substring(i, i+1) != "_"; i++){
+		client_id = client_id + client_listing_id_string.substring(i, i+1);
+		stop = i+2;
+	}
+	listing_id = client_listing_id_string.substring(stop, client_listing_id_string.length);
+
+	var insert_to_bucket_query = 'insert into bucket (listing_id, client_id) values (' + connection.escape(listing_id) + ', ' + connection.escape(client_id) + ')';
+	connection.beginTransaction(function(err) {
+			if (err) { 
+				throw err; 
+			}
+			
+			connection.query(insert_to_bucket_query, function(err, result) {
+			
+			if (err) { 
+					connection.rollback(function() {
+						throw err;
+					});
+			}
+
+			connection.commit(function(err){
+				if(err){
+					connection.rollback(function(){
+						throw err;
+					});
+				}
+
+				res.send(200);
+			});
+			
+			});
+	});
+
+	connection.on('error', function(err){
+			if(err.code == 'PROTOCOL_CONNECTION_LOST')
+			{ 
+						console.log('reconnected');
+					connection =  database.connect_db();
+			}
+			else
+			{
+				throw err;
+			}
+		});
+
 }
 
 
@@ -99,44 +151,43 @@ exports.drop_from_bucket = function(req, res, next){
 
 	var delete_entry_from_bucket = 'delete from bucket where listing_id = ' + connection.escape(listing_id) + ' and client_id = ' + connection.escape(client_id);
 	connection.beginTransaction(function(err) {
-	  	if (err) { 
-	  		throw err; 
-	  	}
-  		
-  		connection.query(delete_entry_from_bucket, function(err, result) {
-	    
-	    if (err) { 
-      		connection.rollback(function() {
-        		throw err;
-      		});
-    	}
+			if (err) { 
+				throw err; 
+			}
+			
+			connection.query(delete_entry_from_bucket, function(err, result) {
+			
+			if (err) { 
+					connection.rollback(function() {
+						throw err;
+					});
+			}
 
-      connection.commit(function(err){
-        if(err){
-          connection.rollback(function(){
-            throw err;
-          });
-        }
+			connection.commit(function(err){
+				if(err){
+					connection.rollback(function(){
+						throw err;
+					});
+				}
 
-        res.send(200);
-      });
-    	
-  		});
+				res.send(200);
+			});
+			
+			});
 	});
 
 
 	connection.on('error', function(err){
-    	if(err.code == 'PROTOCOL_CONNECTION_LOST')
-    	{	
-          	console.log('reconnected');
-      		connection =  database.connect_db();
-    	}
-    	else
-    	{
-      	throw err;
-    	}
-  	});
-
+			if(err.code == 'PROTOCOL_CONNECTION_LOST')
+			{	
+						console.log('reconnected');
+					connection =  database.connect_db();
+			}
+			else
+			{
+				throw err;
+			}
+		});
 }
 
 
@@ -347,3 +398,104 @@ exports.purchase_item = function (req, res, next) {
 
 };
 
+exports.insert_ranking = function(req, res, next){
+	var ranker_rakee_rank_string = req.params.parameter;
+
+	var ranker_id = ranker_rakee_rank_string.split('_')[0];
+	var rankee_id = ranker_rakee_rank_string.split('_')[1];
+	var rank = ranker_rakee_rank_string.split('_')[2];
+
+	var insert_ranking_query = 'insert into user_ranking (ranker_id, rankee_id, rank) values (' + connection.escape(ranker_id) + ', ' + connection.escape(rankee_id) + ', ' + connection.escape(rank) + ')';
+
+	connection.beginTransaction(function(err) {
+			if (err) { 
+				throw err; 
+			}
+			
+			connection.query(insert_ranking_query, function(err, result) {
+			
+			if (err) { 
+					connection.rollback(function() {
+						throw err;
+					});
+			}
+
+			connection.commit(function(err){
+				if(err){
+					connection.rollback(function(){
+						throw err;
+					});
+				}
+
+				res.send(200);
+			});
+			
+			});
+	});
+	connection.on('error', function(err){
+			if(err.code == 'PROTOCOL_CONNECTION_LOST')
+			{ 
+						console.log('reconnected');
+					connection =  database.connect_db();
+			}
+			else
+			{
+				throw err;
+			}
+		});
+}
+
+exports.update_balance = function(req, res, next){
+	var client_balance_string = req.params.parameter;
+	var client_id = "" + client_balance_string.split("_")[0];
+	var amount = "" + client_balance_string.split("_")[1];
+	var sales;
+
+	connection.beginTransaction(function(err) {
+		if (err) throw err;
+
+		connection.query('select account_total as amount, total_sales from bank_account where account_owner = ' + connection.escape(client_id), function(err, rows){
+			if(!err){
+				amount = +(rows[0].amount) + +(amount);
+				sales = rows[0].total_sales + 1;
+
+				var update_balance_query = 'update bank_account set account_total = ' + connection.escape(amount) + ', total_sales = ' + connection.escape(sales) + ' where account_owner = '+ connection.escape(client_id);
+				connection.query(update_balance_query, function(err, result) {
+
+					if (err) { 
+						connection.rollback(function() {
+							throw err;
+						});
+					}
+
+					connection.commit(function(err){
+						if(err){
+							connection.rollback(function(){
+								throw err;
+							});
+						}
+
+						res.send(200);
+					}); 
+				});
+
+			}
+
+		});
+
+
+
+
+		connection.on('error', function(err){
+			if(err.code == 'PROTOCOL_CONNECTION_LOST')
+			{ 
+				console.log('reconnected');
+				connection =  database.connect_db();
+			}
+			else
+			{
+				throw err;
+			}
+		});
+	});
+}

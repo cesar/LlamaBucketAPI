@@ -100,9 +100,14 @@ app.get('/checkout_address', cart.get_address);
 app.get('/search/:parameter', search.get_results);
 app.post('/filter_results', search.get_filtered_results);
 app.post('/filter_category_results', search.get_filtered_category_results);
+<<<<<<< HEAD
 app.post('/purchase_item/:id', buy.purchase_item);
 app.post('/purchase_bucket/:id', buy.purchase_bucket);
 
+=======
+app.post('/buy_item/:id', cart.buy_single_item);
+app.get('/get_item_by_listing/:listing_id', item.get_item_id);
+>>>>>>> cca9994e7a7e9001b66d40408ba6f27b3c465adc
 
 
 
@@ -114,7 +119,6 @@ app.post('/purchase_bucket/:id', buy.purchase_bucket);
 app.get('/get_category_options', category.get_category_options);
 app.post('/sign_in', user.sign_in);
 app.post('/upload_item', user.upload_item);
-
 app.post('/register_user', user.register_user);
 app.get('/profile/:user_id', user.get_profile);
 app.get('/get_address/:id', user.get_address);
@@ -160,7 +164,7 @@ app.get('/reportmonth/:parameter', admin.get_report_total_sales_month_by_product
 */
 
 app.post('/submit_bid', item.submit_bid);
-/*=============================
+/* ============================
 *              Buy             |
 * =============================
 */
@@ -173,6 +177,15 @@ app.post('/deactivate_listing/:parameter', buy.deactivate_listing);
 app.post('/drop_from_bucket/:parameter', buy.drop_from_bucket);
 //Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
 app.post('/insert_notification/:parameter', buy.insert_notification);
+//Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
+app.post('/insert_to_bucket/:parameter', buy.insert_to_bucket);
+//Pass in the format xxx_yyy_zzz, x is the ranker, y is the rankee, z is the rank
+app.post('/insert_ranking/:parameter', buy.insert_ranking);
+//Pass in the format xxx_yyy, where x is the CLIENT ID and yyy is the balance to ADD
+//Can use a negative number to remove as in 101_-17.99
+//101 is the client id, -17.99 is the amount to add
+//Also increments the client's total sales.
+app.post('/update_balance/:parameter', buy.update_balance);
 
 /*
 * =============================
