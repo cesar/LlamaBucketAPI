@@ -182,6 +182,10 @@ app.post('/insert_ranking/:parameter', buy.insert_ranking);
 //Also increments the client's total sales.
 app.post('/update_balance/:parameter', buy.update_balance);
 
+app.post('/rank_single_purchase/:id', buy.rank_single_purchase);
+
+app.post('/rank_bucket_purchase/:id', buy.rank_bucket_purchase);
+
 /*
 * =============================
 *       Create the server      |
