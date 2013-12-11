@@ -6,7 +6,7 @@ var connection = database.connect_db();
 
 var get_item = function(req, res, next){
   console.log(req.params);
-  var get_item_query = 'SELECT *, count(listing_id) as bid_count FROM bidding_history natural join (SELECT * FROM listing natural join  category natural join item natural join address natural join client where item_id='+connection.escape(req.params.parameter) +' and cat_id = item_category and is_primary = 1 and seller_id = client_id) as Q';
+  var get_item_query = 'SELECT *, count(listing_id) as bid_count FROM bidding_history natural join (SELECT * FROM listing natural join  category natural join item natural join address natural join client where item_id='+connection.escape(req.params.parameter) +' and cat_id = item_category and is_primary = 1 and seller_id = client_id and listing_is_active =1) as Q';
 console.log(get_item_query);
 connection.query(get_item_query,function(err, rows){
   res.send(rows[0]);
@@ -32,6 +32,20 @@ var get_item_picture = function (req, res, next) {
   res.sendfile(path.resolve('./uploads/' + req.params.parameter));
 }; 
 
+exports.get_item_id = function(req, res, next)
+{ console.log(req.params);
+  var get_listing_by_id = 'SELECT item_id FROM listing WHERE listing_id=' + connection.escape(req.params.listing_id);
+  connection.query(get_listing_by_id, function(err, rows)
+  {
+    if(err) throw err;
+    else{
+      console.log(rows);
+      res.send(rows[0]);
+    }
+  });
+
+
+}
 
 
 var submit_bid = function(req, res, next)
@@ -54,12 +68,9 @@ var submit_bid = function(req, res, next)
       //Get current bid value need to make a query that gets seller_id, price and the highest bidder
       var get_current_bid_query = 'SELECT *, count(listing_id) as bid_count, max(bid_amount) as max_bid FROM bidding_history natural join ( SELECT * FROM listing WHERE item_id ='+connection.escape(item_id)+') as T';
 
-      //Get bank account balance query
-      var get_bank_account_balance_query = 'SELECT account_total FROM bank_account WHERE account_owner=' + connection.escape(user_id);
 
       console.log(get_current_bid_query);
-      console.log(get_bank_account_balance_query);
-      var current_bid, bank_balance;
+      var current_bid;
 
       //Query the DB for current bid price
       connection.query(get_current_bid_query, function(err,rows)
@@ -90,10 +101,9 @@ var submit_bid = function(req, res, next)
         {
 
 
-         console.log("GET CURRENT BID RESPONSE:");
          console.log( rows);
+         //Current bid of the item
          current_bid = rows[0].price;
-         console.log("PRICE: " + current_bid);
 
 
          var find_highest_bidder = 'SELECT bidder_id FROM bidding_history natural join listing WHERE item_id='+connection.escape(item_id) + 'and price = bid_amount'
@@ -101,33 +111,16 @@ var submit_bid = function(req, res, next)
          {
 
           if(err) throw err;
-          else if(rows[0].bidder_id == user_id)
+          if(rows.length > 0){
+          if(rows[0].bidder_id == user_id)
           {
             console.log("USER IS THE HIGHEST BIDDER");
                         res.send({message: "You're currently the highest bidder", issue: "highest_bidder"});
 
           }
-          else{
-            console.log("QUERING THE DB");
-            console.log(get_bank_account_balance_query);
-
-
-
-
-
-
-
-
-         
-      //Query the DB for the users bank account balance
-      connection.query(get_bank_account_balance_query, function(err, rows)
-      {
-        if(err)
-        {
-          console.log(err);
-
         }
-
+        
+           
         else
         {
 
@@ -136,16 +129,11 @@ var submit_bid = function(req, res, next)
     
 
 
-         console.log("GET BANK ACCOUNT RESPONSE: ");
          console.log(rows);
 
-         bank_balance = rows[0].account_total;
-         console.log("BALANCE" + bank_balance);
 
+         var bid_amount_bool = false;
 
-
-         var bid_amount_bool = false,
-         balance_boolean = false;
          console.log("PROCESSING BOOLEANS");
 
          //Check if the bid amount is higher than the current bid
@@ -163,24 +151,13 @@ var submit_bid = function(req, res, next)
           res.send({ message : "You need to bid higher", price : current_bid, issue: "current price"});
         }
 
-        //Check if the bid amount can be substracted from the bank account
-        if(bid_amount < bank_balance)
-        {
-
-          balance_boolean = true;
-        }
-        else
-        {
-
-
-          res.send({ message : "Insufficient Funds", issue: "bank"});;
-        }
+       
+       
 
         console.log("PRICE: " + bid_amount_bool);
-        console.log("Balance: " + balance_boolean);
 
       //INSERT BID INTO THE DB
-      if(balance_boolean && bid_amount_bool)
+      if( bid_amount_bool)
       {
         var find_listing_query = 'SELECT listing_id FROM listing WHERE item_id =' + connection.escape(item_id);
         console.log("FIND LISTING QUERY: " + find_listing_query);
@@ -299,7 +276,7 @@ var submit_bid = function(req, res, next)
           {
             console.log("UPDATED PRICE");
             
-  connection.commit(function(err)
+            connection.commit(function(err)
             {
               if (err) { 
                 connection.rollback(function()
@@ -329,9 +306,9 @@ var submit_bid = function(req, res, next)
 }
 }
 
-});
 
-   }
+
+   
 
 
          });
@@ -356,15 +333,44 @@ var submit_bid = function(req, res, next)
 
 }
 
-exports.update_item = function(req, res, next)
-{
+// exports.delete_item = function(req, res, next)
+// {
     
 
+//     var item_id = req.body.item_id;
+//     var delete_item = 'UPDATE listing SET listing_is_active = 0 WHERE item_id=' + connection.escape(item_id);
+//     connection.beginTransaction(function(err)
+//     {
+
+
+//       if(err) throw err;
+
+//       else{
+
+
+//         connection.query(delete_item, function(err, rows)
+//         {
+
+//           if(err) throw err;
+
+//           else
+//           {
+
+
+//             var find_bidders = 'SELECT bidder_id FROM bidding_history natural join (SELECT listing_id FROM listing WHERE item_id=' + connection.escape(item_id)+ ') as T';
+
+//             connection.query(find_bidders, function())
+
+//           }
+//         })
+//       }
+//     })
 
 
 
 
-}
+
+// }
 exports.submit_bid = submit_bid;
 exports.get_item = get_item;
 exports.get_item_picture = get_item_picture;

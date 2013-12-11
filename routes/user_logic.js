@@ -8,6 +8,7 @@ var database = require('./database.js');
 
 var connection = database.connect_db();
 
+var serverURL = 'http://74.213.79.108:5000'
 /*
 *	Check the user credentials for a sign in, no hashing whatsoever so far.
 */
@@ -1139,7 +1140,7 @@ connection.beginTransaction(function(err) {
                 {        
                         var type_query;
 
-                        var listing_query = 'INSERT INTO listing (price, start_bid, exp_date, seller_id, item_id, is_active,  is_auction, buyout_price, shipping_price, shipping_service, handle_time) VALUES(';
+                        var listing_query = 'INSERT INTO listing (price, start_bid, exp_date, seller_id, item_id, listing_is_active,  is_auction, buyout_price, shipping_price, shipping_service, handle_time) VALUES(';
 
 
                                 var item_id = result.insertId;
@@ -1207,6 +1208,7 @@ connection.query(listing_query + type_query + shipping_info, function(error, row
                                         throw err;
                                 });
                         }
+                        res.send(200);
                         console.log('Insert Listing Success!');
                 });
         }
