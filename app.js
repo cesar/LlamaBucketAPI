@@ -172,6 +172,10 @@ app.post('/deactivate_listing/:parameter', buy.deactivate_listing);
 app.post('/drop_from_bucket/:parameter', buy.drop_from_bucket);
 //Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
 app.post('/insert_notification/:parameter', buy.insert_notification);
+//Pass in the format xxx_yyy where xxx is the CLIENT ID and yyy is the LISTING ID
+app.post('/insert_to_bucket/:parameter', buy.insert_to_bucket);
+//Pass in the format xxx_yyy_zzz, x is the ranker, y is the rankee, z is the rank
+app.post('/insert_ranking/:parameter', buy.insert_ranking);
 
 /*
 * =============================
