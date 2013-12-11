@@ -282,7 +282,7 @@ exports.purchase_bucket = function (req, res, next) {
 
   var get_client = 'select * from address natural join credit_card where is_primary = 1 and client_id = ' + connection.escape(req.params.id);
 
-  var remove_from_bucket = 'delete from bucker where client_id = ' + connection.escape(req.params.id);
+  var remove_from_bucket = 'delete from bucket where client_id = ' + connection.escape(req.params.id);
 
   connection.beginTransaction( function (err) {
     if (err) {
@@ -395,6 +395,99 @@ exports.purchase_bucket = function (req, res, next) {
 };
 
 exports.purchase_item = function (req, res, next) {
+
+  var update_listing = 'update listing set listing_is_active = 0 where item_id = ' + connection.escape(req.params.id);
+
+  var get_user_information = 'select * from address natural join credit_card where is_primary = 1 and client_id = ' + connection.escape(req.body.id);
+
+  var get_listing_information = 'select seller_id, listing_id, price from listing where item_id = ' + connection.escape(req.params.id);
+
+  connection.beginTransaction( function (err) {
+
+    if (err) {
+      connection.rollback( function () {
+        throw err;
+      });
+    }
+
+    //Update listing so that it's longer active.
+    connection.query(update_listing, function (err, first_result) {
+
+      if (err) {
+        connection.rollback( function () {
+          throw err;
+        });
+      }
+
+      //Get the users information, credit card and address
+      connection.query(get_user_information, function (err, second_result) {
+
+
+        if (err) {
+          connection.rollback( function () {
+            throw err;
+          });
+        }
+
+        connection.query(get_listing_information, function (err, third_result) {
+
+          if (err) {
+            connection.rollback( function() {
+              throw err;
+            });
+          }
+
+          var invoice = 'insert into invoice (invoice_date, final_price, buyer_id, listing_id, credit_card, shipping_address) values (now(), ' +third_result[0].price + ', '
+            + connection.escape(req.body.id) + ', ' + third_result[0].listing_id + ', ' + second_result[0].cc_id + ', ' + second_result[0].address_id + ')';
+
+          var notification = 'insert into user_notifications (client_id, listing_id, is_read, notification_message, notification_date, title) values (' 
+            + third_result[0].seller_id + ', ' + third_result[0].listing_id + ', 0, "Item sold", now(), "Sold")';
+
+          connection.query(invoice, function (err, fourth_result) {
+
+            if (err) {
+              connection.rollback( function() {
+                throw err;
+              });
+            }
+
+            connection.query(notification, function (err, fifth_result) {
+
+              if (err) {
+                connection.rollback( function () {
+                  throw err;
+                });
+              }
+
+              connection.commit( function (err) {
+
+                if (err) {
+                  connection.rollback( function () {
+                    throw err; 
+                  });
+                }
+                res.send(200);
+              });
+            });
+          });
+        });
+
+      });
+
+    });
+  });
+
+connection.on('error', function(err){
+      if(err.code == 'PROTOCOL_CONNECTION_LOST')
+      { 
+        console.log('reconnected');
+        connection =  database.connect_db();
+      }
+      else
+      {
+        throw err;
+      }
+    });
 
 };
 
