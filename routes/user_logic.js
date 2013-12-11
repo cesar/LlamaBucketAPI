@@ -60,7 +60,8 @@ exports.sign_in = function(req, res, next)
 exports.get_profile = function(req, res, next)
 {
 	//Get the necesary user information, arrange correctly as a JSON, send to client.
-	var user_information = 'select client_firstname, client_lastname, client_image, email, phone, address_1, address_2, city, zip_code, state, country, cc_number, cc_type from client natural join (select address_1, address_2, city, zip_code, state, country, client_id from address where is_primary = 1) as t1 natural join (select client_id, cc_number, cc_type from credit_card where is_primary = 1) as t2 where client_id = '+connection.escape(req.params.user_id);
+	var user_information = 'select client_firstname, client_lastname, client_image, email, phone, address_1, address_2, city, zip_code, state, country, cc_number, cc_type, account_total, total_sales from client natural join (select address_1, address_2, city, zip_code, state, country, client_id from address where is_primary = 1) as t1 natural join (select client_id, cc_number, cc_type from credit_card where is_primary = 1) as t2 natural join (select account_owner, account_total, total_sales from bank_account where account_owner = '
+    + connection.escape(req.params.user_id) + ') as t3 where client_id = '+connection.escape(req.params.user_id);
   
   var user_rank = 'select avg(rank) as rank from user_ranking where rankee_id =' +connection.escape(req.params.user_id);
 
@@ -92,7 +93,9 @@ exports.get_profile = function(req, res, next)
             city : user[0].city,
             state : user[0].state,
             zip_code : user[0].zip_code,
-            contry : user[0].country
+            contry : user[0].country,
+            total_sales : user[0].total_sales,
+            account_total : user[0].account_total
         };
 
         res.send(send_data);
@@ -114,7 +117,9 @@ exports.get_profile = function(req, res, next)
             city : user[0].city,
             state : user[0].state,
             zip_code : user[0].zip_code,
-            contry : user[0].country
+            contry : user[0].country,
+            total_sales : user[0].total_sales,
+            account_total : user[0].account_total
 
         };
 
