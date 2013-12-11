@@ -1,4 +1,4 @@
-3var database = require('./database.js');
+var database = require('./database.js');
 
 
 var connection = database.connect_db();
