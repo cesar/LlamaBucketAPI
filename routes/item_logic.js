@@ -358,7 +358,38 @@ var submit_bid = function(req, res, next)
 
 exports.update_item = function(req, res, next)
 {
-    
+    console.log(req.body);
+
+    var update_type = req.body.upload_type;
+    console.log(update_type);
+    if(update_type == "no-image")
+    { 
+
+
+      var update_item_query = 'UPDATE item SET ' +
+      'item_name='+ connection.escape(req.body.item_name) + ','+
+      'item_description=' + connection.escape(req.body.item_description) + ','+
+      'item_brand='+ connection.escape(req.body.item_brand) + ','+
+      'item_year=' + connection.escape(req.body.item_year) + ','+
+      'item_category=' + connection.escape(req.body.item_category) +
+      'WHERE item_id=' + connection.escape(req.body.item_id);
+      console.log(update_item_query);
+      connection.query(update_item_query, function(err, rows)
+      {
+
+
+        if(err) throw err;
+        else{
+
+
+
+          var update_listing_query = ''
+        }
+      })
+
+
+
+    }
 
 
 
