@@ -6,7 +6,7 @@ A server for the LlamaBucket web application. Part of our databases course durin
 Setup:
 ===
 
-In order to run this server instance, you need to install the heroku toolbelt: [link]{https://toolbelt.heroku.com/}
+In order to run this server instance, you need to install the [heroku toolbelt](https://toolbelt.heroku.com/)
 
 On terminal, execute the following commands:
 
