@@ -1,10 +1,12 @@
-LlamaBucket Server
+LlamaBucket
 =========
 
-A server for the LlamaBucket web application
+A server for the LlamaBucket web application. Part of our databases course during fall 2013
 
 Setup:
 ===
+
+In order to run this server instance, you need to install the heroku toolbelt: `https://toolbelt.heroku.com/`
 
 On terminal, execute the following commands:
 
@@ -12,4 +14,4 @@ On terminal, execute the following commands:
 
 2 - `npm install`
 
-3 - `node app.js`
+3 - Run either `nf start` or `foreman start`
