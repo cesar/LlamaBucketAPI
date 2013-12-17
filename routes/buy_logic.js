@@ -43,9 +43,7 @@ exports.deactivate_listing = function(req, res, next) {
     if (err) {
       throw err;
     }
-
     connection.query(update_listing_query, function(err, result) {
-
       if (err) {
         connection.rollback(function() {
           throw err;
@@ -211,9 +209,9 @@ exports.purchase_bucket = function(req, res, next) {
 
         values = values + '(' + first_result[i].seller_id + ', ' + first_result[i].listing_id + ', 0, "Item sold", now() , "Sold"), ';
       }
-
+      console.log(first_result);
       final_query = 'insert into user_notifications (client_id, listing_id, is_read, notification_message, notification_date, title) values ' + values.slice(0, values.length - 2);
-
+      console.log(final_query);
       //Marked items as purchased in the listings table
       connection.query(purchased_items, function(err, second_result) {
         if (err) {
